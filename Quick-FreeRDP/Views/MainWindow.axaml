@@ -30,6 +30,8 @@
                       HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Stretch"
                       Grid.ColumnSpan="2"
+                      SelectedItem="{Binding SelectedRdpItem}"
+                      DisplayMemberBinding="{Binding Name}"
                       ItemsSource="{Binding RdpItems}">
             </ComboBox>
 
@@ -63,18 +65,18 @@
                         RDP Name
                     </TextBlock>
                     <TextBox Grid.Row="0" Grid.Column="1"
-                             Text="{Binding RdpName}" />
+                             Text="{Binding SelectedRdpItem.Name , Mode=TwoWay}" />
 
                     <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">IP Address</TextBlock>
                     <TextBox Grid.Row="1" Grid.Column="1"
-                             Text="{Binding IpAddress}" />
+                             Text="{Binding SelectedRdpItem.IpAddress}" />
 
                     <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Resolution</TextBlock>
                     <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="*,*"
                           ColumnSpacing="20"
                           HorizontalAlignment="Stretch">
-                        <TextBox Grid.Column="0" Text="{Binding ResolutionWidth}" />
-                        <TextBox Grid.Column="1" Text="{Binding ResolutionHeight}" />
+                        <TextBox Grid.Column="0" Text="{Binding SelectedRdpItem.ResolutionWidth}" />
+                        <TextBox Grid.Column="1" Text="{Binding SelectedRdpItem.ResolutionHeight}" />
                     </Grid>
 
                     <TextBlock Grid.Row="3"
@@ -85,13 +87,13 @@
                     <CheckBox Grid.Row="3"
                               Grid.Column="1"
                               VerticalAlignment="Top"
-                              IsChecked="{Binding FullScreenBool}">
+                              IsChecked="{Binding SelectedRdpItem.FullScreenBool}">
                     </CheckBox>
 
                     <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Floatbar</TextBlock>
                     <CheckBox Grid.Row="4" Grid.Column="1"
                               VerticalAlignment="Top"
-                              IsChecked="{Binding FloatBarBool}">
+                              IsChecked="{Binding SelectedRdpItem.FloatBarBool}">
                     </CheckBox>
 
 
@@ -101,8 +103,9 @@
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Right"
                             Padding="50,5,50,5"
-                            Margin="0,10,10,0">
-                        Create
+                            Margin="0,10,10,0"
+                            Command="{Binding SaveDetails}">
+                        Save
                     </Button>
 
                 </Grid>
