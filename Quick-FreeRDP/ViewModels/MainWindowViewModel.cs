@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -10,53 +13,148 @@ namespace Quick_FreeRDP.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    //public RdpItem SelectedRdpItem { get; set; }
-    
-    [ObservableProperty]
-    private RdpItem selectedRdpItem;
-    
-    public List<RdpItem> RdpItems { get; set; }
+    [ObservableProperty] private bool saveEnabled = true;
+
+    [ObservableProperty] private RdpItem newRdpItem;
+
+    [ObservableProperty] private RdpItem selectedRdpItem;
+
+    partial void OnNewRdpItemChanged(RdpItem value)
+    {
+        if (value == null) return;
+        
+        if (value.Name == NewEntryName)
+        {
+            SaveEnabled = false;
+        }
+        else
+        {
+            SaveEnabled = true;
+        }
+
+        value.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(RdpItem.Name))
+            {
+                SaveEnabled = value.Name != NewEntryName;
+            }
+        };
+    }
+
+    partial void OnSelectedRdpItemChanged(RdpItem value)
+    {
+        if (value != null)
+        {
+            // fill out the form based on the selection from the combobox
+            NewRdpItem = new RdpItem()
+            {
+                Name = value.Name,
+                IpAddress = value.IpAddress,
+                ResolutionHeight = value.ResolutionHeight,
+                ResolutionWidth = value.ResolutionWidth,
+                FloatBarBool = value.FloatBarBool,
+                FullScreenBool = value.FullScreenBool,
+            };
+        }
+    }
+
+
+    public ObservableCollection<RdpItem> RdpItems { get; set; }
+
+    private const string NewEntryName = "*New Entry*";
 
     public MainWindowViewModel()
     {
-       // SelectedRdpItem = new RdpItem();
+        RdpItems = new ObservableCollection<RdpItem>();
 
-        RdpItems = new List<RdpItem>();
+        // Example 1
+        RdpItem demoItem = new RdpItem() { };
+        demoItem.Name = "Demo";
+        demoItem.IpAddress = "127.0.0.1";
+        demoItem.ResolutionHeight = 1920;
+        demoItem.ResolutionWidth = 1080;
+        demoItem.FloatBarBool = false;
+        demoItem.FullScreenBool = false;
+        RdpItems.Add(demoItem);
 
-        RdpItem demoItem = new RdpItem()
-        {
-            Name = "Demo",
-            IpAddress = "127.0.0.1",
-            ResolutionHeight = 1920,
-            ResolutionWidth = 1080,
-            FloatBarBool = false,
-            FullScreenBool = false
-        };
+        // Example 2
+        demoItem = new RdpItem() { };
+        demoItem.Name = "Demo 2";
+        demoItem.IpAddress = "333.0.0.1";
+        demoItem.ResolutionHeight = 1920;
+        demoItem.ResolutionWidth = 1080;
+        demoItem.FloatBarBool = true;
+        demoItem.FullScreenBool = true;
+        RdpItems.Add(demoItem);
 
+        // Example 2
+        demoItem = new RdpItem() { };
+        demoItem.Name = NewEntryName;
+        demoItem.IpAddress = string.Empty;
+        demoItem.FloatBarBool = true;
+        demoItem.FullScreenBool = true;
         RdpItems.Add(demoItem);
     }
 
     [RelayCommand]
     public void SaveDetails()
     {
-        var dialog = new Window
+        // dialog setup
+        Window dialog = new Window
         {
-            Title = "Title",
+            Title = "Message",
             Content = new TextBlock
             {
-                Text = $"RdpName: {SelectedRdpItem.Name} , IpAddress: {SelectedRdpItem.IpAddress}"
+                Text = $"Added {SelectedRdpItem.Name}"
             },
             Width = 300,
             Height = 150
         };
 
-        var lifetime = Application.Current?.ApplicationLifetime
-            as IClassicDesktopStyleApplicationLifetime;
+        foreach (var rdpItem in RdpItems)
+        {
+            if (string.Equals(rdpItem.Name, NewRdpItem.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                rdpItem.IpAddress = NewRdpItem.IpAddress;
+                rdpItem.ResolutionWidth = NewRdpItem.ResolutionWidth;
+                rdpItem.ResolutionHeight = NewRdpItem.ResolutionHeight;
+                rdpItem.FloatBarBool = NewRdpItem.FloatBarBool;
+                rdpItem.FullScreenBool = NewRdpItem.FullScreenBool;
+
+                dialog.Title = "Updated";
+                dialog.Content = new TextBlock() { Text = $"Updated {SelectedRdpItem.Name}" };
+
+                ShowMessageBox(dialog);
+                return;
+            }
+        }
+
+        RdpItem toAdd = new RdpItem();
+        toAdd = NewRdpItem;
+
+        RdpItems.Add(toAdd);
+        dialog.Title = "Created New";
+        dialog.Content = new TextBlock() { Text = $"Created {NewRdpItem.Name}" };
+
+        //NewRdpItem = new RdpItem();
+
+        foreach (var rdpItem in RdpItems)
+        {
+            if (string.Equals(rdpItem.Name, NewRdpItem.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                SelectedRdpItem = rdpItem; // Switch to the newly created one in the combobox
+            }
+        }
+
+
+        ShowMessageBox(dialog);
+    }
+
+
+    private void ShowMessageBox(Window dialog)
+    {
+        var lifetime = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
 
         dialog.ShowDialog(lifetime?.MainWindow!);
-
-        //   IApplicationLifetime owner = Application.Current?.ApplicationLifetime! as IApplicationLifetime;
-
-        // dialog.ShowDialog(owner.MainWindow);
     }
 }

@@ -2,9 +2,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Quick_FreeRDP.Models;
 
-public class RdpItem //: ObservableObject
+public partial class RdpItem : ObservableObject
 {
-    public  string Name { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string name = string.Empty;
     
     public string IpAddress { get; set; }  = string.Empty;
     
