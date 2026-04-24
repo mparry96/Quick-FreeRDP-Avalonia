@@ -22,7 +22,8 @@ public partial class MainWindowViewModel : ViewModelBase
     partial void OnNewRdpItemChanged(RdpItem value)
     {
         if (value == null) return;
-        
+
+        // Check between combo box switches if button needs disabling
         if (value.Name == NewEntryName)
         {
             SaveEnabled = false;
@@ -32,6 +33,7 @@ public partial class MainWindowViewModel : ViewModelBase
             SaveEnabled = true;
         }
 
+        // Enable or disable as keyboard input is changed
         value.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(RdpItem.Name))
@@ -94,6 +96,15 @@ public partial class MainWindowViewModel : ViewModelBase
         demoItem.FloatBarBool = true;
         demoItem.FullScreenBool = true;
         RdpItems.Add(demoItem);
+        
+        SortByName(RdpItems);
+
+        if (RdpItems.Any())
+        {
+           // SelectedRdpItem = RdpItems.First();
+           SelectedRdpItem = RdpItems[1];
+        }
+     
     }
 
     [RelayCommand]
@@ -102,14 +113,14 @@ public partial class MainWindowViewModel : ViewModelBase
         // dialog setup
         Window dialog = new Window
         {
-            Title = "Message",
-            Content = new TextBlock
-            {
-                Text = $"Added {SelectedRdpItem.Name}"
-            },
             Width = 300,
             Height = 150
         };
+
+        bool updated = false;
+        
+        RdpItem switchToThisOne = new  RdpItem();
+        switchToThisOne = RdpItems.First(); // a fallback item only
 
         foreach (var rdpItem in RdpItems)
         {
@@ -121,32 +132,36 @@ public partial class MainWindowViewModel : ViewModelBase
                 rdpItem.FloatBarBool = NewRdpItem.FloatBarBool;
                 rdpItem.FullScreenBool = NewRdpItem.FullScreenBool;
 
+                updated = true;
+                switchToThisOne = rdpItem;
+                
                 dialog.Title = "Updated";
                 dialog.Content = new TextBlock() { Text = $"Updated {SelectedRdpItem.Name}" };
-
-                ShowMessageBox(dialog);
-                return;
             }
         }
 
-        RdpItem toAdd = new RdpItem();
-        toAdd = NewRdpItem;
-
-        RdpItems.Add(toAdd);
-        dialog.Title = "Created New";
-        dialog.Content = new TextBlock() { Text = $"Created {NewRdpItem.Name}" };
-
-        //NewRdpItem = new RdpItem();
-
-        foreach (var rdpItem in RdpItems)
+        if (!updated)
         {
-            if (string.Equals(rdpItem.Name, NewRdpItem.Name, StringComparison.OrdinalIgnoreCase))
+            RdpItem toAdd = new RdpItem();
+            toAdd = NewRdpItem;
+
+            RdpItems.Add(toAdd);
+            dialog.Title = "Created New";
+            dialog.Content = new TextBlock() { Text = $"Created {NewRdpItem.Name}" };
+
+
+            foreach (var rdpItem in RdpItems)
             {
-                SelectedRdpItem = rdpItem; // Switch to the newly created one in the combobox
+                if (string.Equals(rdpItem.Name, NewRdpItem.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    switchToThisOne = rdpItem; // Switch to the newly created one in the combobox
+                }
             }
         }
-
-
+    
+        SortByName(RdpItems);
+        SelectedRdpItem = switchToThisOne;
+        
         ShowMessageBox(dialog);
     }
 
@@ -156,5 +171,19 @@ public partial class MainWindowViewModel : ViewModelBase
         var lifetime = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
 
         dialog.ShowDialog(lifetime?.MainWindow!);
+    }
+    
+    public void SortByName(ObservableCollection<RdpItem> collection)
+    {
+        var sorted = collection
+            .OrderBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        collection.Clear();
+
+        foreach (var item in sorted)
+        {
+            collection.Add(item);
+        }
     }
 }
