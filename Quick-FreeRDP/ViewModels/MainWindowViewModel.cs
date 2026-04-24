@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Quick_FreeRDP.Helpers;
 using Quick_FreeRDP.Models;
+using Tmds.DBus.Protocol;
 
 namespace Quick_FreeRDP.ViewModels;
 
@@ -97,7 +100,7 @@ public partial class MainWindowViewModel : ViewModelBase
         demoItem.FullScreenBool = true;
         RdpItems.Add(demoItem);
         
-        SortByName(RdpItems);
+        SortHelper.SortByName(RdpItems);
 
         if (RdpItems.Any())
         {
@@ -108,15 +111,9 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void SaveDetails()
+    public async Task SaveDetails()
     {
-        // dialog setup
-        Window dialog = new Window
-        {
-            Width = 300,
-            Height = 150
-        };
-
+        MessageBox msg = new MessageBox();
         bool updated = false;
         
         RdpItem switchToThisOne = new  RdpItem();
@@ -135,8 +132,8 @@ public partial class MainWindowViewModel : ViewModelBase
                 updated = true;
                 switchToThisOne = rdpItem;
                 
-                dialog.Title = "Updated";
-                dialog.Content = new TextBlock() { Text = $"Updated {SelectedRdpItem.Name}" };
+                msg.Title = "Updated";
+                msg.Message = $"Updated {SelectedRdpItem.Name}";
             }
         }
 
@@ -146,8 +143,8 @@ public partial class MainWindowViewModel : ViewModelBase
             toAdd = NewRdpItem;
 
             RdpItems.Add(toAdd);
-            dialog.Title = "Created New";
-            dialog.Content = new TextBlock() { Text = $"Created {NewRdpItem.Name}" };
+            msg.Title = "Created New";
+            msg.Message = $"Created {NewRdpItem.Name}";
 
 
             foreach (var rdpItem in RdpItems)
@@ -159,31 +156,13 @@ public partial class MainWindowViewModel : ViewModelBase
             }
         }
     
-        SortByName(RdpItems);
+        SortHelper.SortByName(RdpItems);
         SelectedRdpItem = switchToThisOne;
-        
-        ShowMessageBox(dialog);
+
+        await msg.Show();
     }
 
 
-    private void ShowMessageBox(Window dialog)
-    {
-        var lifetime = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-
-        dialog.ShowDialog(lifetime?.MainWindow!);
-    }
     
-    public void SortByName(ObservableCollection<RdpItem> collection)
-    {
-        var sorted = collection
-            .OrderBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
-            .ToList();
 
-        collection.Clear();
-
-        foreach (var item in sorted)
-        {
-            collection.Add(item);
-        }
-    }
 }
