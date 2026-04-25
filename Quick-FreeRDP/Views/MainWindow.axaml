@@ -48,14 +48,15 @@
                     Background="ForestGreen"
                     FontWeight="Bold"
                     HorizontalContentAlignment="Center"
-                    HorizontalAlignment="Stretch">
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding Launch}">
                 Launch
             </Button>
 
             <Expander Header="RDP Details" Margin="0,20,0,0"
                       HorizontalAlignment="Stretch"
                       IsExpanded="True" Grid.Row="2" Grid.ColumnSpan="2">
-                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
                       ColumnDefinitions="Auto,*"
                       ColumnSpacing="26"
                       RowSpacing="14"
@@ -67,38 +68,45 @@
                     </TextBlock>
                     <TextBox Grid.Row="0" Grid.Column="1"
                              Text="{Binding NewRdpItem.Name}" />
-
-                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">IP Address</TextBlock>
+                    
+                    <TextBlock Grid.Row="1" Grid.Column="0"
+                               VerticalAlignment="Center">
+                        User Name
+                    </TextBlock>
                     <TextBox Grid.Row="1" Grid.Column="1"
+                             Text="{Binding NewRdpItem.UserName}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">IP Address</TextBlock>
+                    <TextBox Grid.Row="2" Grid.Column="1"
                              Text="{Binding NewRdpItem.IpAddress}" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Resolution</TextBlock>
-                    <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="*,*"
+                    <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Resolution</TextBlock>
+                    <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,*"
                           ColumnSpacing="20"
                           HorizontalAlignment="Stretch">
                         <TextBox Grid.Column="0" Text="{Binding NewRdpItem.ResolutionWidth}" />
                         <TextBox Grid.Column="1" Text="{Binding NewRdpItem.ResolutionHeight}" />
                     </Grid>
 
-                    <TextBlock Grid.Row="3"
+                    <TextBlock Grid.Row="4"
                                Grid.Column="0"
                                VerticalAlignment="Center">
                         Full Screen
                     </TextBlock>
-                    <CheckBox Grid.Row="3"
+                    <CheckBox Grid.Row="4"
                               Grid.Column="1"
                               VerticalAlignment="Top"
                               IsChecked="{Binding NewRdpItem.FullScreenBool}">
                     </CheckBox>
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Floatbar</TextBlock>
-                    <CheckBox Grid.Row="4" Grid.Column="1"
+                    <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">Floatbar</TextBlock>
+                    <CheckBox Grid.Row="5" Grid.Column="1"
                               VerticalAlignment="Top"
                               IsChecked="{Binding NewRdpItem.FloatBarBool}">
                     </CheckBox>
 
 
-                    <Button Grid.Column="0" Grid.Row="5"
+                    <Button Grid.Column="0" Grid.Row="6"
                             Background="CadetBlue"
                             FontWeight="Bold"
                             Grid.ColumnSpan="2"

@@ -9,6 +9,8 @@ public partial class RdpItem : ObservableObject
     
     public string IpAddress { get; set; }  = string.Empty;
     
+    public string UserName { get; set; }  = string.Empty;
+    
     public int ResolutionHeight { get; set; }
 
     public int ResolutionWidth { get; set; }
