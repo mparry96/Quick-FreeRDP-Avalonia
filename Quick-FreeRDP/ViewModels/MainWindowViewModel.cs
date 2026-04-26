@@ -99,21 +99,38 @@ public partial class MainWindowViewModel : ViewModelBase
         // demoItem.FullScreenBool = true;
         // RdpItems.Add(demoItem);
         //
-        // // Example 2
-        // demoItem = new RdpItem() { };
-        // demoItem.Name = NewEntryName;
-        // demoItem.IpAddress = string.Empty;
-        // demoItem.FloatBarBool = true;
-        // demoItem.FullScreenBool = true;
-        // RdpItems.Add(demoItem);
-
-        SortHelper.SortByName(RdpItems);
-
+        
         if (RdpItems.Any())
         {
             // SelectedRdpItem = RdpItems.First();
-            SelectedRdpItem = RdpItems[1];
+            SelectedRdpItem = RdpItems[0];
+
+            bool needsNewEntry = true;
+            foreach (var rdpItem in RdpItems)
+            {
+                if (string.Equals(rdpItem.Name, NewEntryName, StringComparison.OrdinalIgnoreCase))
+                {
+                    needsNewEntry = false;
+                }
+            }
+
+            if (needsNewEntry)
+            {
+                var newEntryOption = new RdpItem() { };
+                newEntryOption = new RdpItem() { };
+                newEntryOption.Name = NewEntryName;
+                newEntryOption.IpAddress = string.Empty;
+                newEntryOption.FloatBarBool = true;
+                newEntryOption.FullScreenBool = true;
+                RdpItems.Add(newEntryOption);
+            }
         }
+
+  
+
+        SortHelper.SortByName(RdpItems);
+
+   
     }
 
     [RelayCommand]
@@ -121,10 +138,13 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         try
         {
+            string fullScreenCommand = SelectedRdpItem.FullScreenBool ? "/f" : string.Empty;
+            string floatbarCommand = SelectedRdpItem.FloatBarBool ? "/floatbar:show:always" : string.Empty;
             Process.Start(new ProcessStartInfo
             {
                 FileName = "gnome-terminal", // or use xterm, konsole, etc.
-                Arguments = $"-e \"xfreerdp /v:{SelectedRdpItem.IpAddress} /u:{SelectedRdpItem.UserName} /size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}\"",
+                Arguments =
+                    $"-e \"xfreerdp /v:{SelectedRdpItem.IpAddress} /u:{SelectedRdpItem.UserName} {fullScreenCommand} {floatbarCommand} /size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}\"",
                 UseShellExecute = false // Needed to pass the command to the terminal
             });
         }
@@ -132,6 +152,31 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             Console.WriteLine(e);
             throw;
+        }
+    }
+
+    [RelayCommand]
+    public async Task Delete()
+    {
+        int removeIndex = 0;
+        foreach (var rdpItem in RdpItems)
+        {
+            if (string.Equals(rdpItem.Name, NewRdpItem.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                removeIndex =  RdpItems.IndexOf(rdpItem);
+            }
+        }
+
+        if (removeIndex > 0)
+        {
+            RdpItems.RemoveAt(removeIndex);
+            ConfigManager.SaveConfig(RdpItems);
+        }
+
+        if (RdpItems.Any())
+        {
+            // SelectedRdpItem = RdpItems.First();
+            SelectedRdpItem = RdpItems[0];
         }
     }
 

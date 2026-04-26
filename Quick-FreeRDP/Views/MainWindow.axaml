@@ -7,7 +7,7 @@
         x:Class="Quick_FreeRDP.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Width="500" Height="530"
+        Width="500" Height="560"
         MinWidth="300" MinHeight="300"
         Title="Quick_FreeRDP">
 
@@ -40,7 +40,8 @@
                     Background="Red"
                     FontWeight="Bold"
                     HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Center">
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding Delete}">
                 Delete Entry
             </Button>
 
