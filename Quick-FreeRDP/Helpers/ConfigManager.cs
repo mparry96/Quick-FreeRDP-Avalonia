@@ -12,10 +12,13 @@ public class ConfigManager
     private static string GetConfigFilePath()
     {
         // Get the home directory
-        string homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        string homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         
         // Define the config directory (usually ~/.config/YourAppName)
-        string configDirectory = Path.Combine(homeDirectory, ".config", "Quick-FreeRDP");
+        string configDirectory = Path.Combine(homeDirectory, "Quick-FreeRDP");
+        
+        LoggingWithSerilog.Logger($"configDirectory: {configDirectory}");
+  
 
         // Ensure the directory exists
         if (!Directory.Exists(configDirectory))
@@ -32,17 +35,19 @@ public class ConfigManager
         try
         {
             string filePath = GetConfigFilePath();
-
+            
             // Serialize the config object to JSON
-            string json = JsonSerializer.Serialize(rdpItems, new JsonSerializerOptions { WriteIndented = true });
+            string json = JsonSerializer.Serialize(rdpItems, JsonSerializableObsColRdp.Default.ObservableCollectionRdpItem);
+            
+            LoggingWithSerilog.Logger($"json config Serialized");
 
             // Write the JSON to the file
             File.WriteAllText(filePath, json);
-            Console.WriteLine($"Configuration saved to {filePath}");
+            LoggingWithSerilog.Logger($"Configuration saved to {filePath}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving configuration: {ex.Message}");
+            LoggingWithSerilog.Logger($"Error saving configuration:" , ex);
         }
     }
 
@@ -58,19 +63,22 @@ public class ConfigManager
             {
                 // Read the JSON file and deserialize into the object
                 string json = File.ReadAllText(filePath);
-                returnValue = JsonSerializer.Deserialize<ObservableCollection<RdpItem>>(json)!;
+                returnValue = JsonSerializer.Deserialize(
+                    json,
+                    JsonSerializableObsColRdp.Default.ObservableCollectionRdpItem
+                )!;
                 
                 return returnValue;
             }
             else
             {
-                Console.WriteLine("Configuration file not found. Returning default configuration.");
+                LoggingWithSerilog.Logger("Configuration file not found. Returning default configuration.");
                 return returnValue;
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading configuration: {ex.Message}");
+            LoggingWithSerilog.Logger($"Error loading configuration", ex);
             return returnValue;
         }
     }

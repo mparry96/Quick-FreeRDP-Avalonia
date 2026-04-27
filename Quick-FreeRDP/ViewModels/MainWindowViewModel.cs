@@ -1,29 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Quick_FreeRDP.Helpers;
 using Quick_FreeRDP.Models;
-using Tmds.DBus.Protocol;
 
 namespace Quick_FreeRDP.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
+    [ObservableProperty] private bool deleteAndLaunchEnabled = true;
+    
     [ObservableProperty] private bool saveEnabled = true;
 
     [ObservableProperty] private RdpItem newRdpItem;
 
     [ObservableProperty] private RdpItem selectedRdpItem;
 
+    
+    
     partial void OnNewRdpItemChanged(RdpItem value)
     {
         if (value == null) return;
@@ -32,10 +30,12 @@ public partial class MainWindowViewModel : ViewModelBase
         if (value.Name == NewEntryName)
         {
             SaveEnabled = false;
+            DeleteAndLaunchEnabled = false;
         }
         else
         {
             SaveEnabled = true;
+            DeleteAndLaunchEnabled = true;
         }
 
         // Enable or disable as keyboard input is changed
@@ -73,59 +73,27 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
+        LoggingWithSerilog.LoggingWithSerilogStart();
+        
         NewRdpItem = new RdpItem();
 
         RdpItems = new ObservableCollection<RdpItem>();
 
         RdpItems = ConfigManager.LoadConfig();
-        //
-        // // Example 1
-        // RdpItem demoItem = new RdpItem() { };
-        // demoItem.Name = "Demo";
-        // demoItem.IpAddress = "127.0.0.1";
-        // demoItem.ResolutionHeight = 1920;
-        // demoItem.ResolutionWidth = 1080;
-        // demoItem.FloatBarBool = false;
-        // demoItem.FullScreenBool = false;
-        // RdpItems.Add(demoItem);
-        //
-        // // Example 2
-        // demoItem = new RdpItem() { };
-        // demoItem.Name = "Demo 2";
-        // demoItem.IpAddress = "333.0.0.1";
-        // demoItem.ResolutionHeight = 1920;
-        // demoItem.ResolutionWidth = 1080;
-        // demoItem.FloatBarBool = true;
-        // demoItem.FullScreenBool = true;
-        // RdpItems.Add(demoItem);
-        //
         
-        if (RdpItems.Any())
+        
+        if (!RdpItems.Any())
         {
-            // SelectedRdpItem = RdpItems.First();
-            SelectedRdpItem = RdpItems[0];
-
-            bool needsNewEntry = true;
-            foreach (var rdpItem in RdpItems)
-            {
-                if (string.Equals(rdpItem.Name, NewEntryName, StringComparison.OrdinalIgnoreCase))
-                {
-                    needsNewEntry = false;
-                }
-            }
-
-            if (needsNewEntry)
-            {
-                var newEntryOption = new RdpItem() { };
-                newEntryOption = new RdpItem() { };
-                newEntryOption.Name = NewEntryName;
-                newEntryOption.IpAddress = string.Empty;
-                newEntryOption.FloatBarBool = true;
-                newEntryOption.FullScreenBool = true;
-                RdpItems.Add(newEntryOption);
-            }
+            var newEntryOption = new RdpItem() { };
+            newEntryOption = new RdpItem() { };
+            newEntryOption.Name = NewEntryName;
+            newEntryOption.IpAddress = string.Empty;
+            newEntryOption.FloatBarBool = true;
+            newEntryOption.FullScreenBool = true;
+            RdpItems.Add(newEntryOption);
         }
-
+        
+        SelectedRdpItem = RdpItems[0];
   
 
         SortHelper.SortByName(RdpItems);
@@ -140,12 +108,20 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             string fullScreenCommand = SelectedRdpItem.FullScreenBool ? "/f" : string.Empty;
             string floatbarCommand = SelectedRdpItem.FloatBarBool ? "/floatbar:show:always" : string.Empty;
+            // Process.Start(new ProcessStartInfo
+            // {
+            //     FileName = "gnome-terminal", // or use xterm, konsole, etc.
+            //     Arguments =
+            //         $"-e \"xfreerdp /v:{SelectedRdpItem.IpAddress} /u:{SelectedRdpItem.UserName} {fullScreenCommand} {floatbarCommand} /size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}\"",
+            //     UseShellExecute = false // Needed to pass the command to the terminal
+            // });
+            
             Process.Start(new ProcessStartInfo
             {
-                FileName = "gnome-terminal", // or use xterm, konsole, etc.
+                FileName = "gnome-terminal",
                 Arguments =
-                    $"-e \"xfreerdp /v:{SelectedRdpItem.IpAddress} /u:{SelectedRdpItem.UserName} {fullScreenCommand} {floatbarCommand} /size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}\"",
-                UseShellExecute = false // Needed to pass the command to the terminal
+                    $"-- bash -c \"xfreerdp /v:{SelectedRdpItem.IpAddress} /u:{SelectedRdpItem.UserName} {fullScreenCommand} {floatbarCommand} /size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}; exec bash\"",
+                UseShellExecute = false
             });
         }
         catch (Exception e)

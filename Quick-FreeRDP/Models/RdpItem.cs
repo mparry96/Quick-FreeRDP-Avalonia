@@ -4,8 +4,16 @@ namespace Quick_FreeRDP.Models;
 
 public partial class RdpItem : ObservableObject
 {
-    [ObservableProperty]
+    // [ObservableProperty]
+    // private string name = string.Empty;
+    
     private string name = string.Empty;
+
+    public string Name
+    {
+        get => name;
+        set => SetProperty(ref name, value);
+    }
     
     public string IpAddress { get; set; }  = string.Empty;
     

@@ -7,7 +7,9 @@
         x:Class="Quick_FreeRDP.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
+        WindowStartupLocation="CenterScreen"
         Width="500" Height="560"
+        MaxWidth="900" MaxHeight="800"
         MinWidth="300" MinHeight="300"
         Title="Quick_FreeRDP">
 
@@ -41,6 +43,7 @@
                     FontWeight="Bold"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
+                    IsEnabled="{Binding DeleteAndLaunchEnabled}"
                     Command="{Binding Delete}">
                 Delete Entry
             </Button>
@@ -50,6 +53,7 @@
                     FontWeight="Bold"
                     HorizontalContentAlignment="Center"
                     HorizontalAlignment="Stretch"
+                    IsEnabled="{Binding DeleteAndLaunchEnabled}"
                     Command="{Binding Launch}">
                 Launch
             </Button>
