@@ -126,7 +126,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            LoggingWithSerilog.Logger("Error launching rdp session via terminal",e);
             throw;
         }
     }

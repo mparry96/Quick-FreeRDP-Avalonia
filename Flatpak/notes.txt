@@ -1,0 +1,3 @@
+flatpak-builder --force-clean --user --install build-dir manifest.json
+
+flatpak uninstall com.example.QuickFreeRDP

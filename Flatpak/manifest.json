@@ -1,0 +1,42 @@
+{
+  "app-id": "com.example.QuickFreeRDP",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "23.08",
+  "sdk": "org.freedesktop.Sdk",
+  "command": "Quick-FreeRDP",
+  "finish-args": [
+    "--share=network",
+    "--socket=x11",
+    "--socket=wayland",
+    "--device=dri"
+  ],
+  "modules": [
+    {
+      "name": "quick-freerdp",
+      "buildsystem": "simple",
+      "build-commands": [
+        "mkdir -p /app/bin",
+        "mkdir -p /app/share/applications",
+        "mkdir -p /app/share/icons/hicolor/256x256/apps",
+        "cp -r ./* /app/bin/",
+        "chmod +x /app/bin/Quick-FreeRDP",
+        "install -Dm644 Quick-FreeRDP.desktop /app/share/applications/com.example.QuickFreeRDP.desktop",
+        "install -Dm644 QuickResolution.png /app/share/icons/hicolor/256x256/apps/com.example.QuickFreeRDP.png"
+      ],
+      "sources": [
+        {
+          "type": "dir",
+          "path": "../Quick-FreeRDP/bin/Release/net10.0/linux-x64/publish"
+        },
+        {
+          "type": "file",
+          "path": "Quick-FreeRDP.desktop"
+        },
+        {
+          "type": "file",
+          "path": "QuickResolution.png"
+        }
+      ]
+    }
+  ]
+}
