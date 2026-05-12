@@ -1,11 +1,9 @@
 using System;
-// using Avalonia.Logging;
 using Serilog;
-using Serilog.Events;
 
 namespace Quick_FreeRDP.Helpers;
 
-public class LoggingWithSerilog
+public static class LoggingWithSerilog
 {
     public static void LoggingWithSerilogStart()
     {
@@ -17,8 +15,7 @@ public class LoggingWithSerilog
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .Enrich.FromLogContext()
-            .WriteTo.File(LogPath,LogEventLevel.Verbose,
-                outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss} {Message:lj}{NewLine}{Exception}")
+            .WriteTo.File(LogPath, outputTemplate: "{Timestamp:dd-MM-yyyy HH:mm:ss} {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
 
         Log.Information("Started Quick-FreeRDP");
@@ -30,7 +27,7 @@ public class LoggingWithSerilog
 
         if (ex != null)
         {
-            Log.Error(Convert.ToString(ex));
+            Log.Error(Convert.ToString(ex)!);
         }
     }
     

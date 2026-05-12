@@ -45,8 +45,11 @@ public partial class MainWindowViewModel : ViewModelBase
         };
     }
 
-    partial void OnSelectedRdpItemChanged(RdpItem? value)
+    partial void OnSelectedRdpItemChanged(RdpItem value)
     {
+        // value really is null sometimes, keep this check
+        // caused by how bindings & collection updates work
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value == null)
         {
             NewRdpItem = new RdpItem()
@@ -188,8 +191,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         if (!updated)
         {
-            RdpItem toAdd = new RdpItem();
-            toAdd = NewRdpItem;
+            RdpItem toAdd = NewRdpItem;
 
             RdpItems.Add(toAdd);
             msg.Title = "Created New";
