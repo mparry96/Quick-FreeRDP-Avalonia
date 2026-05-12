@@ -12,19 +12,16 @@ namespace Quick_FreeRDP.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty] private bool deleteAndLaunchEnabled = true;
-    
-    [ObservableProperty] private bool saveEnabled = true;
+    [ObservableProperty] public partial bool DeleteAndLaunchEnabled { get; set; } = true;
 
-    [ObservableProperty] private RdpItem newRdpItem;
+    [ObservableProperty] public partial bool SaveEnabled { get; set; } = true;
+    [ObservableProperty] public partial RdpItem NewRdpItem { get; set; }
 
-    [ObservableProperty] private RdpItem selectedRdpItem;
+    [ObservableProperty] public partial RdpItem SelectedRdpItem { get; set; }
 
-    
-    
     partial void OnNewRdpItemChanged(RdpItem value)
     {
-        if (value == null) return;
+        //  if (value == null) return;
 
         // Check between combo box switches if button needs disabling
         if (value.Name == NewEntryName)
@@ -48,22 +45,31 @@ public partial class MainWindowViewModel : ViewModelBase
         };
     }
 
-    partial void OnSelectedRdpItemChanged(RdpItem value)
+    partial void OnSelectedRdpItemChanged(RdpItem? value)
     {
-        if (value != null)
+        if (value == null)
         {
-            // fill out the form based on the selection from the combobox
             NewRdpItem = new RdpItem()
             {
-                Name = value.Name,
-                IpAddress = value.IpAddress,
-                UserName = value.UserName,
-                ResolutionHeight = value.ResolutionHeight,
-                ResolutionWidth = value.ResolutionWidth,
-                FloatBarBool = value.FloatBarBool,
-                FullScreenBool = value.FullScreenBool,
+                Name = string.Empty,
+                IpAddress = string.Empty,
+                UserName = string.Empty,
+                FloatBarBool = true,
+                FullScreenBool = false,
             };
+            return;
         }
+
+        NewRdpItem = new RdpItem()
+        {
+            Name = value.Name,
+            IpAddress = value.IpAddress,
+            UserName = value.UserName,
+            ResolutionHeight = value.ResolutionHeight,
+            ResolutionWidth = value.ResolutionWidth,
+            FloatBarBool = value.FloatBarBool,
+            FullScreenBool = value.FullScreenBool,
+        };
     }
 
 
@@ -74,31 +80,30 @@ public partial class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         LoggingWithSerilog.LoggingWithSerilogStart();
-        
+
         NewRdpItem = new RdpItem();
 
-        RdpItems = new ObservableCollection<RdpItem>();
+        RdpItems = [];
 
         RdpItems = ConfigManager.LoadConfig();
-        
-        
+
+
         if (!RdpItems.Any())
         {
-            var newEntryOption = new RdpItem() { };
-            newEntryOption = new RdpItem() { };
-            newEntryOption.Name = NewEntryName;
-            newEntryOption.IpAddress = string.Empty;
-            newEntryOption.FloatBarBool = true;
-            newEntryOption.FullScreenBool = true;
-            RdpItems.Add(newEntryOption);
+           var newEntryOption = new RdpItem
+           {
+               Name = NewEntryName,
+               IpAddress = string.Empty,
+               FloatBarBool = true,
+               FullScreenBool = true
+           };
+           RdpItems.Add(newEntryOption);
         }
-        
+
         SelectedRdpItem = RdpItems[0];
-  
+
 
         SortHelper.SortByName(RdpItems);
-
-   
     }
 
     [RelayCommand]
@@ -108,14 +113,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             string fullScreenCommand = SelectedRdpItem.FullScreenBool ? "/f" : string.Empty;
             string floatbarCommand = SelectedRdpItem.FloatBarBool ? "/floatbar:show:always" : string.Empty;
-            // Process.Start(new ProcessStartInfo
-            // {
-            //     FileName = "gnome-terminal", // or use xterm, konsole, etc.
-            //     Arguments =
-            //         $"-e \"xfreerdp /v:{SelectedRdpItem.IpAddress} /u:{SelectedRdpItem.UserName} {fullScreenCommand} {floatbarCommand} /size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}\"",
-            //     UseShellExecute = false // Needed to pass the command to the terminal
-            // });
-            
+
             Process.Start(new ProcessStartInfo
             {
                 FileName = "gnome-terminal",
@@ -126,20 +124,20 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            LoggingWithSerilog.Logger("Error launching rdp session via terminal",e);
+            LoggingWithSerilog.Logger("Error launching rdp session via terminal", e);
             throw;
         }
     }
 
     [RelayCommand]
-    public async Task Delete()
+    public void Delete()
     {
         int removeIndex = 0;
         foreach (var rdpItem in RdpItems)
         {
             if (string.Equals(rdpItem.Name, NewRdpItem.Name, StringComparison.OrdinalIgnoreCase))
             {
-                removeIndex =  RdpItems.IndexOf(rdpItem);
+                removeIndex = RdpItems.IndexOf(rdpItem);
             }
         }
 
