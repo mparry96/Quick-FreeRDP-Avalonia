@@ -21,6 +21,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty] public partial string RdpPassword { get; set; }
 
+    [ObservableProperty] public partial string WindowConsoleLog { get; set; } = "Ready";
+
     partial void OnNewRdpItemChanged(RdpItem value)
     {
         //  if (value == null) return;
@@ -82,9 +84,24 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private const string NewEntryName = "*New Entry*";
 
+    private void AppendLog(string message)
+    {
+        Avalonia.Threading.Dispatcher.UIThread.Post(() => { WindowConsoleLog += Environment.NewLine + message; });
+    }
+
+    partial void OnWindowConsoleLogChanged(string value)
+    {
+        ScrollToEndRequested?.Invoke();
+    }
+
+    public event Action? ScrollToEndRequested;
+
     public MainWindowViewModel()
     {
         LoggingWithSerilog.LoggingWithSerilogStart();
+
+
+        LoggingWithSerilog.SetUiLogger(AppendLog);
 
         NewRdpItem = new RdpItem();
 
@@ -112,6 +129,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     public void Launch()
     {
+        int errorCount = 0;
         try
         {
             var args = new List<string>
@@ -166,7 +184,10 @@ public partial class MainWindowViewModel : ViewModelBase
                 process.ErrorDataReceived += (_, e) =>
                 {
                     if (!string.IsNullOrWhiteSpace(e.Data))
+                    {
                         LoggingWithSerilog.Logger(e.Data);
+                        errorCount += 1;
+                    }
                 };
 
                 process.BeginOutputReadLine();
@@ -176,15 +197,23 @@ public partial class MainWindowViewModel : ViewModelBase
                 process.StandardInput.WriteLine(RdpPassword);
                 process.StandardInput.Flush();
                 process.StandardInput.Close();
+                
+                process.WaitForExit();
+                if (errorCount > 0)
+                {
+                    LoggingWithSerilog.Logger($"{errorCount} Errors launching RDP session, see log",null, true);
+                }
             }
         }
         catch (Exception e)
         {
-            LoggingWithSerilog.Logger("Error launching RDP session", e);
+            LoggingWithSerilog.Logger("Error caught launching RDP session, see log", e, true);
             throw;
         }
+        
+ 
     }
-    
+
 
     [RelayCommand]
     public void Delete()
@@ -267,6 +296,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
         ConfigManager.SaveConfig(RdpItems);
 
-        await msg.Show();
+        await msg.ShowAsync();
     }
 }
