@@ -1,5 +1,0 @@
-[Runtime]
-name=com.example.QuickFreeRDP.Debug
-
-[ExtensionOf]
-ref=app/com.example.QuickFreeRDP/x86_64/master

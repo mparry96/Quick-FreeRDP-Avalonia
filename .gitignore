@@ -1,6 +1,4 @@
-# Flatpak build output
-build-dir/
-.flatpak-builder/
+
 
 # Ignore Rider and IntelliJ IDEA-specific files
 .idea/
