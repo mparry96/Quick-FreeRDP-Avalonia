@@ -1,3 +1,18 @@
+----Flatpak build/install and uninstall commands-----------
+
 flatpak-builder --force-clean --user --install build-dir manifest.json
 
 flatpak uninstall com.example.QuickFreeRDP
+
+
+
+-----Helpful info related to flatpak build ----------
+
+The log will be here for flatpak: /home/mparry/.var/app/com.example.QuickFreeRDP/data/Quick-FreeRDP
+
+The manifest looks at the build here (.. means up a level):
+"path": "../Quick-FreeRDP/bin/Release/net10.0/linux-x64/publish"
+
+The ffmpeg-full extension must be installed on the host system, so that it works when building the flatpak
+To install it run: flatpak install flathub org.freedesktop.Platform.ffmpeg-full//23.08
+To check it's installed: flatpak list --runtime | grep -i ffmpeg

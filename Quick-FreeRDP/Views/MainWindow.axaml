@@ -8,7 +8,7 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         WindowStartupLocation="CenterScreen"
-        Width="500" Height="560"
+        Width="500" Height="600"
         MaxWidth="900" MaxHeight="800"
         MinWidth="300" MinHeight="300"
         Title="Quick_FreeRDP">
@@ -22,7 +22,7 @@
     
     <Grid Margin="20,20,20,20" ColumnDefinitions="*">
         
-        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto"
               RowSpacing="12"
               ColumnSpacing="20"
               Margin="5"
@@ -37,8 +37,16 @@
                       DisplayMemberBinding="{Binding Name}"
                       ItemsSource="{Binding RdpItems}">
             </ComboBox>
+            
+            <TextBox Grid.Column="0" Grid.Row="1" 
+                     Grid.ColumnSpan="2"
+                     Text="{Binding RdpPassword}"
+                     PasswordChar="●" 
+                     PlaceholderText="Enter password">
+                
+            </TextBox>
 
-            <Button Grid.Column="0" Grid.Row="1"
+            <Button Grid.Column="0" Grid.Row="2"
                     Background="Red"
                     FontWeight="Bold"
                     HorizontalAlignment="Stretch"
@@ -48,7 +56,7 @@
                 Delete Entry
             </Button>
 
-            <Button Grid.Column="1" Grid.Row="1"
+            <Button Grid.Column="1" Grid.Row="2"
                     Background="ForestGreen"
                     FontWeight="Bold"
                     HorizontalContentAlignment="Center"
@@ -60,7 +68,7 @@
 
             <Expander Header="RDP Details" Margin="0,20,0,0"
                       HorizontalAlignment="Stretch"
-                      IsExpanded="True" Grid.Row="2" Grid.ColumnSpan="2">
+                      IsExpanded="True" Grid.Row="3" Grid.ColumnSpan="2">
                 <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
                       ColumnDefinitions="Auto,*"
                       ColumnSpacing="26"

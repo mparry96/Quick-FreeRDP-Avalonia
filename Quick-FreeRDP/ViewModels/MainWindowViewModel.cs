@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -13,11 +15,11 @@ namespace Quick_FreeRDP.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     [ObservableProperty] public partial bool DeleteAndLaunchEnabled { get; set; } = true;
-
     [ObservableProperty] public partial bool SaveEnabled { get; set; } = true;
     [ObservableProperty] public partial RdpItem NewRdpItem { get; set; }
-
     [ObservableProperty] public partial RdpItem SelectedRdpItem { get; set; }
+
+    [ObservableProperty] public partial string RdpPassword { get; set; }
 
     partial void OnNewRdpItemChanged(RdpItem value)
     {
@@ -93,19 +95,17 @@ public partial class MainWindowViewModel : ViewModelBase
 
         if (!RdpItems.Any())
         {
-           var newEntryOption = new RdpItem
-           {
-               Name = NewEntryName,
-               IpAddress = string.Empty,
-               FloatBarBool = true,
-               FullScreenBool = true
-           };
-           RdpItems.Add(newEntryOption);
+            var newEntryOption = new RdpItem
+            {
+                Name = NewEntryName,
+                IpAddress = string.Empty,
+                FloatBarBool = true,
+                FullScreenBool = true
+            };
+            RdpItems.Add(newEntryOption);
         }
 
         SelectedRdpItem = RdpItems[0];
-
-
         SortHelper.SortByName(RdpItems);
     }
 
@@ -114,23 +114,77 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            string fullScreenCommand = SelectedRdpItem.FullScreenBool ? "/f" : string.Empty;
-            string floatbarCommand = SelectedRdpItem.FloatBarBool ? "/floatbar:show:always" : string.Empty;
-
-            Process.Start(new ProcessStartInfo
+            var args = new List<string>
             {
-                FileName = "gnome-terminal",
-                Arguments =
-                    $"-- bash -c \"xfreerdp /v:{SelectedRdpItem.IpAddress} /u:{SelectedRdpItem.UserName} {fullScreenCommand} {floatbarCommand} /size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}; exec bash\"",
-                UseShellExecute = false
-            });
+                $"/v:{SelectedRdpItem.IpAddress}",
+                $"/u:{SelectedRdpItem.UserName}",
+                $"/size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}",
+
+                // Ignore self-signed cert prompts
+                "/cert:ignore",
+
+                // Read password securely from stdin
+                "/from-stdin"
+            };
+
+            if (SelectedRdpItem.FullScreenBool)
+                args.Add("/f");
+
+            if (SelectedRdpItem.FloatBarBool)
+                args.Add("/floatbar:show:always");
+
+            string xfreerdpPath =
+                File.Exists("/app/bin/xfreerdp")
+                    ? "/app/bin/xfreerdp"
+                    : "xfreerdp";
+
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = xfreerdpPath,
+                UseShellExecute = false,
+
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            foreach (var arg in args)
+            {
+                startInfo.ArgumentList.Add(arg);
+            }
+
+            var process = Process.Start(startInfo);
+
+            if (process != null)
+            {
+                process.OutputDataReceived += (_, e) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(e.Data))
+                        LoggingWithSerilog.Logger(e.Data);
+                };
+
+                process.ErrorDataReceived += (_, e) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(e.Data))
+                        LoggingWithSerilog.Logger(e.Data);
+                };
+
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+
+                // Send password securely via stdin
+                process.StandardInput.WriteLine(RdpPassword);
+                process.StandardInput.Flush();
+                process.StandardInput.Close();
+            }
         }
         catch (Exception e)
         {
-            LoggingWithSerilog.Logger("Error launching rdp session via terminal", e);
+            LoggingWithSerilog.Logger("Error launching RDP session", e);
             throw;
         }
     }
+    
 
     [RelayCommand]
     public void Delete()
