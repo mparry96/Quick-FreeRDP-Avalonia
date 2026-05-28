@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Publish Quick-FreeRDP to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
-    <riderPublish configuration="Release" delete_existing_files="true" platform="Any CPU" ready_to_run="true" self_contained="true" target_folder="$PROJECT_DIR$/Quick-FreeRDP/bin/Release/net10.0/linux-x64/publish" target_framework="net10.0" uuid_high="-5878687092907618972" uuid_low="-6618245804402476932">
+    <riderPublish configuration="Release" delete_existing_files="true" platform="Any CPU" self_contained="true" target_folder="$PROJECT_DIR$/Quick-FreeRDP/bin/Release/net10.0/linux-x64/publish" target_framework="net10.0" uuid_high="-5878687092907618972" uuid_low="-6618245804402476932">
       <runtimes>
         <item value="linux-x64" />
       </runtimes>

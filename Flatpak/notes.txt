@@ -1,5 +1,6 @@
 ----Flatpak build/install and uninstall commands-----------
 
+(run from this directory)
 flatpak-builder --force-clean --user --install build-dir manifest.json
 
 flatpak uninstall com.example.QuickFreeRDP
