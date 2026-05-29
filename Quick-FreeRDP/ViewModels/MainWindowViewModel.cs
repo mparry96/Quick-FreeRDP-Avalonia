@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -125,11 +126,100 @@ public partial class MainWindowViewModel : ViewModelBase
         SelectedRdpItem = RdpItems[0];
         SortHelper.SortByName(RdpItems);
     }
+    //
+    // [RelayCommand]
+    // public void Launch()
+    // {
+    //     int errorCount = 0;
+    //     try
+    //     {
+    //         var args = new List<string>
+    //         {
+    //             $"/v:{SelectedRdpItem.IpAddress}",
+    //             $"/u:{SelectedRdpItem.UserName}",
+    //             $"/size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}",
+    //
+    //             // Ignore self-signed cert prompts
+    //             "/cert:ignore",
+    //
+    //             // Read password securely from stdin
+    //             "/from-stdin"
+    //         };
+    //
+    //         if (SelectedRdpItem.FullScreenBool)
+    //             args.Add("/f");
+    //
+    //         if (SelectedRdpItem.FloatBarBool)
+    //             args.Add("/floatbar:show:always");
+    //
+    //         string xfreerdpPath =
+    //             File.Exists("/app/bin/xfreerdp")
+    //                 ? "/app/bin/xfreerdp"
+    //                 : "xfreerdp";
+    //
+    //         var startInfo = new ProcessStartInfo
+    //         {
+    //             FileName = xfreerdpPath,
+    //             UseShellExecute = false,
+    //
+    //             RedirectStandardInput = true,
+    //             RedirectStandardOutput = true,
+    //             RedirectStandardError = true
+    //         };
+    //
+    //         foreach (var arg in args)
+    //         {
+    //             startInfo.ArgumentList.Add(arg);
+    //         }
+    //
+    //         var process = Process.Start(startInfo);
+    //
+    //         if (process != null)
+    //         {
+    //             process.OutputDataReceived += (_, e) =>
+    //             {
+    //                 if (!string.IsNullOrWhiteSpace(e.Data))
+    //                     LoggingWithSerilog.Logger(e.Data);
+    //             };
+    //
+    //             process.ErrorDataReceived += (_, e) =>
+    //             {
+    //                 if (!string.IsNullOrWhiteSpace(e.Data))
+    //                 {
+    //                     LoggingWithSerilog.Logger(e.Data);
+    //                     errorCount += 1;
+    //                 }
+    //             };
+    //
+    //             process.BeginOutputReadLine();
+    //             process.BeginErrorReadLine();
+    //
+    //             // Send password securely via stdin
+    //             process.StandardInput.WriteLine(RdpPassword);
+    //             process.StandardInput.Flush();
+    //             process.StandardInput.Close();
+    //             
+    //             process.WaitForExit();
+    //             if (errorCount > 0)
+    //             {
+    //                 LoggingWithSerilog.Logger($"{errorCount} Errors launching RDP session, see log",null, true);
+    //             }
+    //         }
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         LoggingWithSerilog.Logger("Error caught launching RDP session, see log", e, true);
+    //         throw;
+    //     }
+    //     
+    //
+    // }
 
     [RelayCommand]
-    public void Launch()
+    public async Task Launch()
     {
         int errorCount = 0;
+
         try
         {
             var args = new List<string>
@@ -137,11 +227,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 $"/v:{SelectedRdpItem.IpAddress}",
                 $"/u:{SelectedRdpItem.UserName}",
                 $"/size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}",
-
-                // Ignore self-signed cert prompts
                 "/cert:ignore",
-
-                // Read password securely from stdin
                 "/from-stdin"
             };
 
@@ -160,7 +246,6 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 FileName = xfreerdpPath,
                 UseShellExecute = false,
-
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true
@@ -171,47 +256,55 @@ public partial class MainWindowViewModel : ViewModelBase
                 startInfo.ArgumentList.Add(arg);
             }
 
-            var process = Process.Start(startInfo);
-
-            if (process != null)
+            var process = new Process
             {
-                process.OutputDataReceived += (_, e) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(e.Data))
-                        LoggingWithSerilog.Logger(e.Data);
-                };
+                StartInfo = startInfo,
+                EnableRaisingEvents = true
+            };
 
-                process.ErrorDataReceived += (_, e) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(e.Data))
-                    {
-                        LoggingWithSerilog.Logger(e.Data);
-                        errorCount += 1;
-                    }
-                };
+            process.OutputDataReceived += (_, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Data))
+                    LoggingWithSerilog.Logger(e.Data);
+            };
 
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-
-                // Send password securely via stdin
-                process.StandardInput.WriteLine(RdpPassword);
-                process.StandardInput.Flush();
-                process.StandardInput.Close();
-                
-                process.WaitForExit();
-                if (errorCount > 0)
+            process.ErrorDataReceived += (_, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Data))
                 {
-                    LoggingWithSerilog.Logger($"{errorCount} Errors launching RDP session, see log",null, true);
+                    LoggingWithSerilog.Logger(e.Data);
+                    Interlocked.Increment(ref errorCount);
                 }
-            }
+            };
+
+            process.Start();
+
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            await process.StandardInput.WriteLineAsync(RdpPassword);
+            await process.StandardInput.FlushAsync();
+            process.StandardInput.Close();
+
+            // // Non-blocking wait
+            // await process.WaitForExitAsync();
+            // if (errorCount > 0)
+            // {
+            //     LoggingWithSerilog.Logger(
+            //         $"{errorCount} Errors launching RDP session, see log",
+            //         null,
+            //         true);
+            // }
         }
         catch (Exception e)
         {
-            LoggingWithSerilog.Logger("Error caught launching RDP session, see log", e, true);
+            LoggingWithSerilog.Logger(
+                "Error caught launching RDP session, see log",
+                e,
+                true);
+
             throw;
         }
-        
- 
     }
 
 
