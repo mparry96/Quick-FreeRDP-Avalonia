@@ -3,6 +3,9 @@
   "runtime": "org.freedesktop.Platform",
   "runtime-version": "23.08",
   "sdk": "org.freedesktop.Sdk",
+  "sdk-extensions": [
+    "org.freedesktop.Sdk.Extension.dotnet8"
+  ],
   "command": "Quick-FreeRDP",
   "finish-args": [
     "--share=network",
@@ -52,12 +55,26 @@
     {
       "name": "quick-freerdp",
       "buildsystem": "simple",
+      "build-options": {
+        "append-path": "/usr/lib/sdk/dotnet8/bin",
+        "env": {
+          "DOTNET_ROOT": "/usr/lib/sdk/dotnet8",
+          "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+          "DOTNET_NOLOGO": "1"
+        },
+        "build-args": [
+          "--share=network"
+        ]
+      },
       "build-commands": [
+        "dotnet restore Quick-FreeRDP.csproj",
+        "dotnet publish Quick-FreeRDP.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -f net8.0 -o /app/build",
         "mkdir -p /app/bin",
-        "mkdir -p /app/share/applications",
-        "mkdir -p /app/share/icons/hicolor/256x256/apps",
-        "cp -r ./* /app/bin/",
+        "cp /app/build/* /app/bin/",
         "chmod +x /app/bin/Quick-FreeRDP",
+        "mkdir -p /app/share/applications",
+        "mkdir -p /app/share/metainfo",
+        "mkdir -p /app/share/icons/hicolor/256x256/apps",
         "install -Dm644 Quick-FreeRDP.desktop /app/share/applications/com.mparry96.QuickRDP.desktop",
         "install -Dm644 com.mparry96.QuickRDP.metainfo.xml /app/share/metainfo/com.mparry96.QuickRDP.metainfo.xml",
         "install -Dm644 QuickResolution.png /app/share/icons/hicolor/256x256/apps/com.mparry96.QuickRDP.png"
@@ -65,7 +82,7 @@
       "sources": [
         {
           "type": "dir",
-          "path": "../Quick-FreeRDP/bin/Release/net10.0/linux-x64/publish"
+          "path": "../Quick-FreeRDP"
         },
         {
           "type": "file",

@@ -15,14 +15,17 @@ namespace Quick_FreeRDP.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty] public partial bool DeleteAndLaunchEnabled { get; set; } = true;
-    [ObservableProperty] public partial bool SaveEnabled { get; set; } = true;
-    [ObservableProperty] public partial RdpItem NewRdpItem { get; set; }
-    [ObservableProperty] public partial RdpItem SelectedRdpItem { get; set; }
+    [ObservableProperty] private bool deleteAndLaunchEnabled = true;
+    
+    [ObservableProperty] private bool saveEnabled = true;
+    
+    [ObservableProperty] private RdpItem newRdpItem;
 
-    [ObservableProperty] public partial string RdpPassword { get; set; }
+    [ObservableProperty] private RdpItem selectedRdpItem;
 
-    [ObservableProperty] public partial string WindowConsoleLog { get; set; } = "Ready";
+    [ObservableProperty] private string? rdpPassword;
+
+    [ObservableProperty] private string windowConsoleLog = "Ready";
 
     partial void OnNewRdpItemChanged(RdpItem value)
     {
@@ -92,6 +95,11 @@ public partial class MainWindowViewModel : ViewModelBase
 
     partial void OnWindowConsoleLogChanged(string value)
     {
+        if (string.IsNullOrEmpty((value)))
+        {
+           return;
+        }
+        
         ScrollToEndRequested?.Invoke();
     }
 
@@ -126,98 +134,16 @@ public partial class MainWindowViewModel : ViewModelBase
         SelectedRdpItem = RdpItems[0];
         SortHelper.SortByName(RdpItems);
     }
-    //
-    // [RelayCommand]
-    // public void Launch()
-    // {
-    //     int errorCount = 0;
-    //     try
-    //     {
-    //         var args = new List<string>
-    //         {
-    //             $"/v:{SelectedRdpItem.IpAddress}",
-    //             $"/u:{SelectedRdpItem.UserName}",
-    //             $"/size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}",
-    //
-    //             // Ignore self-signed cert prompts
-    //             "/cert:ignore",
-    //
-    //             // Read password securely from stdin
-    //             "/from-stdin"
-    //         };
-    //
-    //         if (SelectedRdpItem.FullScreenBool)
-    //             args.Add("/f");
-    //
-    //         if (SelectedRdpItem.FloatBarBool)
-    //             args.Add("/floatbar:show:always");
-    //
-    //         string xfreerdpPath =
-    //             File.Exists("/app/bin/xfreerdp")
-    //                 ? "/app/bin/xfreerdp"
-    //                 : "xfreerdp";
-    //
-    //         var startInfo = new ProcessStartInfo
-    //         {
-    //             FileName = xfreerdpPath,
-    //             UseShellExecute = false,
-    //
-    //             RedirectStandardInput = true,
-    //             RedirectStandardOutput = true,
-    //             RedirectStandardError = true
-    //         };
-    //
-    //         foreach (var arg in args)
-    //         {
-    //             startInfo.ArgumentList.Add(arg);
-    //         }
-    //
-    //         var process = Process.Start(startInfo);
-    //
-    //         if (process != null)
-    //         {
-    //             process.OutputDataReceived += (_, e) =>
-    //             {
-    //                 if (!string.IsNullOrWhiteSpace(e.Data))
-    //                     LoggingWithSerilog.Logger(e.Data);
-    //             };
-    //
-    //             process.ErrorDataReceived += (_, e) =>
-    //             {
-    //                 if (!string.IsNullOrWhiteSpace(e.Data))
-    //                 {
-    //                     LoggingWithSerilog.Logger(e.Data);
-    //                     errorCount += 1;
-    //                 }
-    //             };
-    //
-    //             process.BeginOutputReadLine();
-    //             process.BeginErrorReadLine();
-    //
-    //             // Send password securely via stdin
-    //             process.StandardInput.WriteLine(RdpPassword);
-    //             process.StandardInput.Flush();
-    //             process.StandardInput.Close();
-    //             
-    //             process.WaitForExit();
-    //             if (errorCount > 0)
-    //             {
-    //                 LoggingWithSerilog.Logger($"{errorCount} Errors launching RDP session, see log",null, true);
-    //             }
-    //         }
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         LoggingWithSerilog.Logger("Error caught launching RDP session, see log", e, true);
-    //         throw;
-    //     }
-    //     
-    //
-    // }
 
     [RelayCommand]
     public async Task Launch()
     {
+        if (string.IsNullOrEmpty((RdpPassword)))
+        {
+            LoggingWithSerilog.Logger($"Error, a password must be provided", null, true);
+            return;
+        }
+        
         int errorCount = 0;
 
         try

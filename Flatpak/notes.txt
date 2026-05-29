@@ -3,7 +3,7 @@
 (run from this directory)
 flatpak-builder --force-clean --user --install build-dir manifest.json
 
-flatpak uninstall com.example.QuickFreeRDP
+flatpak uninstall com.mparry96.QuickRDP
 
 
 
@@ -21,3 +21,9 @@ To check it's installed: flatpak list --runtime | grep -i ffmpeg
 
 
 freerdp2-x11
+
+
+
+
+also need this installed locally now to build the flatpak
+flatpak install flathub org.freedesktop.Sdk.Extension.dotnet8//23.08
