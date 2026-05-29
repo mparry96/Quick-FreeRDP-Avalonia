@@ -17,3 +17,7 @@ The manifest looks at the build here (.. means up a level):
 The ffmpeg-full extension must be installed on the host system, so that it works when building the flatpak
 To install it run: flatpak install flathub org.freedesktop.Platform.ffmpeg-full//23.08
 To check it's installed: flatpak list --runtime | grep -i ffmpeg
+
+
+
+freerdp2-x11
