@@ -67,13 +67,13 @@
         ]
       },
       "build-commands": [
-        "dotnet restore Quick-FreeRDP.csproj",
-        "dotnet publish Quick-FreeRDP.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -f net8.0 -o /app/build",
+        "dotnet restore Quick-FreeRDP/Quick-FreeRDP.csproj",
+        "dotnet publish Quick-FreeRDP/Quick-FreeRDP.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -f net8.0 -o /app/build",
         "install -Dm755 /app/build/Quick-FreeRDP /app/bin/Quick-FreeRDP",
         "mkdir -p /app/share/applications /app/share/metainfo /app/share/icons/hicolor/256x256/apps",
         "cp -r Flatpak/* /app/share/",
-        "install -Dm644 Flatpak/QuickResolution.png /app/share/icons/hicolor/256x256/apps/com.mparry96.QuickRDP.png",
-        "install -Dm644 Flatpak/Quick-FreeRDP.desktop /app/share/applications/com.mparry96.QuickRDP.desktop",
+        "install -Dm644 Flatpak/com.mparry96.QuickRDP.png /app/share/icons/hicolor/256x256/apps/com.mparry96.QuickRDP.png",
+        "install -Dm644 Flatpak/com.mparry96.QuickRDP.desktop /app/share/applications/com.mparry96.QuickRDP.desktop",
         "install -Dm644 Flatpak/com.mparry96.QuickRDP.metainfo.xml /app/share/metainfo/com.mparry96.QuickRDP.metainfo.xml"
       ],
       "sources": [

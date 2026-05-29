@@ -3,8 +3,11 @@
 (run from this directory)
 flatpak-builder --force-clean --user --install build-dir manifest.json
 
+(uninstall flatpak)
 flatpak uninstall com.mparry96.QuickRDP
 
+(validate the metainfo.xml)
+appstreamcli validate com.mparry96.QuickRDP.metainfo.xml
 
 
 -----Helpful info related to flatpak build ----------
