@@ -69,32 +69,18 @@
       "build-commands": [
         "dotnet restore Quick-FreeRDP.csproj",
         "dotnet publish Quick-FreeRDP.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -f net8.0 -o /app/build",
-        "mkdir -p /app/bin",
-        "cp /app/build/* /app/bin/",
-        "chmod +x /app/bin/Quick-FreeRDP",
-        "mkdir -p /app/share/applications",
-        "mkdir -p /app/share/metainfo",
-        "mkdir -p /app/share/icons/hicolor/256x256/apps",
-        "install -Dm644 Quick-FreeRDP.desktop /app/share/applications/com.mparry96.QuickRDP.desktop",
-        "install -Dm644 com.mparry96.QuickRDP.metainfo.xml /app/share/metainfo/com.mparry96.QuickRDP.metainfo.xml",
-        "install -Dm644 QuickResolution.png /app/share/icons/hicolor/256x256/apps/com.mparry96.QuickRDP.png"
+        "install -Dm755 /app/build/Quick-FreeRDP /app/bin/Quick-FreeRDP",
+        "mkdir -p /app/share/applications /app/share/metainfo /app/share/icons/hicolor/256x256/apps",
+        "cp -r Flatpak/* /app/share/",
+        "install -Dm644 Flatpak/QuickResolution.png /app/share/icons/hicolor/256x256/apps/com.mparry96.QuickRDP.png",
+        "install -Dm644 Flatpak/Quick-FreeRDP.desktop /app/share/applications/com.mparry96.QuickRDP.desktop",
+        "install -Dm644 Flatpak/com.mparry96.QuickRDP.metainfo.xml /app/share/metainfo/com.mparry96.QuickRDP.metainfo.xml"
       ],
       "sources": [
         {
-          "type": "dir",
-          "path": "../Quick-FreeRDP"
-        },
-        {
-          "type": "file",
-          "path": "Quick-FreeRDP.desktop"
-        },
-        {
-          "type": "file",
-          "path": "com.mparry96.QuickRDP.metainfo.xml"
-        },
-        {
-          "type": "file",
-          "path": "QuickResolution.png"
+          "type": "git",
+          "url": "https://github.com/mparry96/Quick-FreeRDP-Avalonia.git",
+          "branch": "main"
         }
       ]
     }
