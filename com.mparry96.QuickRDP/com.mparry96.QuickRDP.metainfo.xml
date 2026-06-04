@@ -35,7 +35,7 @@
   <screenshots>
     <screenshot type="default">
       <image>
-        https://raw.githubusercontent.com/mparry96/Quick-FreeRDP-Avalonia/main/Flatpak/ScreenShotForMetainfo.png
+        https://raw.githubusercontent.com/mparry96/Quick-FreeRDP-Avalonia/main/com.mparry96.QuickRDP/ScreenShotForMetainfo.png
       </image>
     </screenshot>
   </screenshots>
