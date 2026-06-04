@@ -75,9 +75,9 @@
         "mkdir -p /app/share/applications",
         "mkdir -p /app/share/metainfo",
         "mkdir -p /app/share/icons/hicolor/256x256/apps",
-        "install -Dm644 Quick-FreeRDP.desktop /app/share/applications/com.mparry96.QuickRDP.desktop",
+        "install -Dm644 com.mparry96.QuickRDP.desktop /app/share/applications/com.mparry96.QuickRDP.desktop",
         "install -Dm644 com.mparry96.QuickRDP.metainfo.xml /app/share/metainfo/com.mparry96.QuickRDP.metainfo.xml",
-        "install -Dm644 QuickResolution.png /app/share/icons/hicolor/256x256/apps/com.mparry96.QuickRDP.png"
+        "install -Dm644 com.mparry96.QuickRDP.png /app/share/icons/hicolor/256x256/apps/com.mparry96.QuickRDP.png"
       ],
       "sources": [
         {
@@ -86,7 +86,7 @@
         },
         {
           "type": "file",
-          "path": "Quick-FreeRDP.desktop"
+          "path": "com.mparry96.QuickRDP.desktop"
         },
         {
           "type": "file",
@@ -94,7 +94,7 @@
         },
         {
           "type": "file",
-          "path": "QuickResolution.png"
+          "path": "com.mparry96.QuickRDP.png"
         }
       ]
     }
