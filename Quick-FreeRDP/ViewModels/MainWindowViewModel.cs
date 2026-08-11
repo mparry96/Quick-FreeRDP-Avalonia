@@ -175,11 +175,12 @@ public partial class MainWindowViewModel : ViewModelBase
 
             if (SelectedRdpItem.FloatBarBool)
                 args.Add("/floatbar:show:always");
-
+            
+            
             string xfreerdpPath =
-                File.Exists("/app/bin/xfreerdp3")
-                    ? "/app/bin/xfreerdp3"
-                    : "xfreerdp3";
+                File.Exists("/app/bin/xfreerdp")
+                    ? "/app/bin/xfreerdp"
+                    : "xfreerdp";
             
 
             var startInfo = new ProcessStartInfo

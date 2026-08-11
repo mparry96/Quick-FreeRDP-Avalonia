@@ -40,6 +40,9 @@
       "name": "freerdp",
       "buildsystem": "cmake-ninja",
       "config-opts": [
+        "-DALLOW_IN_SOURCE_BUILD=ON",
+        "-DWITH_KRB5=OFF",
+        "-DWITH_FUSE=OFF",
         "-DWITH_X11=ON",
         "-DWITH_CLIENT_SDL=OFF",
         "-DWITH_WAYLAND=ON"
