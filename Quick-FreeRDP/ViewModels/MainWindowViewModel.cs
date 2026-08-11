@@ -16,9 +16,9 @@ namespace Quick_FreeRDP.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     [ObservableProperty] private bool deleteAndLaunchEnabled = true;
-    
+
     [ObservableProperty] private bool saveEnabled = true;
-    
+
     [ObservableProperty] private RdpItem newRdpItem;
 
     [ObservableProperty] private RdpItem selectedRdpItem;
@@ -97,9 +97,9 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (string.IsNullOrEmpty((value)))
         {
-           return;
+            return;
         }
-        
+
         ScrollToEndRequested?.Invoke();
     }
 
@@ -138,12 +138,12 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     public async Task Launch()
     {
-        if (string.IsNullOrEmpty((RdpPassword)))
+        if (string.IsNullOrEmpty(RdpPassword))
         {
-            LoggingWithSerilog.Logger($"Error, a password must be provided", null, true);
+            LoggingWithSerilog.Logger("Error, a password must be provided", null, true);
             return;
         }
-        
+
         int errorCount = 0;
 
         try
@@ -151,11 +151,24 @@ public partial class MainWindowViewModel : ViewModelBase
             var args = new List<string>
             {
                 $"/v:{SelectedRdpItem.IpAddress}",
-                $"/u:{SelectedRdpItem.UserName}",
-                $"/size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}",
-                "/cert:ignore",
-                "/from-stdin"
+                $"/size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}"
             };
+            
+            var parts = SelectedRdpItem.UserName.Split('\\');
+
+            if (parts.Length == 3)
+            {
+                args.Add($"/d:{parts[0]}");
+                args.Add($"/u:{parts[2]}");
+            }
+            else
+            {
+                args.Add($"/u:{SelectedRdpItem.UserName}");
+            }
+            
+            args.Add("/cert:ignore");
+            args.Add("/from-stdin");
+            
 
             if (SelectedRdpItem.FullScreenBool)
                 args.Add("/f");
@@ -164,9 +177,10 @@ public partial class MainWindowViewModel : ViewModelBase
                 args.Add("/floatbar:show:always");
 
             string xfreerdpPath =
-                File.Exists("/app/bin/xfreerdp")
-                    ? "/app/bin/xfreerdp"
-                    : "xfreerdp";
+                File.Exists("/app/bin/xfreerdp3")
+                    ? "/app/bin/xfreerdp3"
+                    : "xfreerdp3";
+            
 
             var startInfo = new ProcessStartInfo
             {
@@ -181,7 +195,10 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 startInfo.ArgumentList.Add(arg);
             }
-
+            
+            LoggingWithSerilog.Logger(
+                    $"{xfreerdpPath} {string.Join(" ", startInfo.ArgumentList)}");
+            
             var process = new Process
             {
                 StartInfo = startInfo,
@@ -212,8 +229,9 @@ public partial class MainWindowViewModel : ViewModelBase
             await process.StandardInput.FlushAsync();
             process.StandardInput.Close();
 
-            // // Non-blocking wait
+            // Optional:
             // await process.WaitForExitAsync();
+            //
             // if (errorCount > 0)
             // {
             //     LoggingWithSerilog.Logger(
@@ -232,7 +250,6 @@ public partial class MainWindowViewModel : ViewModelBase
             throw;
         }
     }
-
 
     [RelayCommand]
     public void Delete()
