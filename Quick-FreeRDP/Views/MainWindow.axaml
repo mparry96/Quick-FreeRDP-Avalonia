@@ -9,8 +9,8 @@
         Icon="/Assets/avalonia-logo.ico"
         WindowStartupLocation="CenterScreen"
         Width="500" Height="670"
-        MaxWidth="900" MaxHeight="800"
-        MinWidth="300" MinHeight="300"
+        MinWidth="300" 
+        MinHeight="300"
         Title="Quick_FreeRDP">
 
     <Design.DataContext>

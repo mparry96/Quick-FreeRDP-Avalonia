@@ -146,6 +146,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
         int errorCount = 0;
 
+        var startInfo = new ProcessStartInfo { };
+
         try
         {
             var args = new List<string>
@@ -176,8 +178,9 @@ public partial class MainWindowViewModel : ViewModelBase
             if (SelectedRdpItem.FloatBarBool)
                 args.Add("/floatbar:show:always");
 
-            string xfreerdpPath;
+            string xfreerdpPath = string.Empty;
 
+            // This is the freerdp version that is built manually from the .tar.bz2 source, and included in my flatpak via the com.mparry96.QuickRDP.json
             if (File.Exists("/app/bin/xfreerdp3"))
             {
                 xfreerdpPath = "/app/bin/xfreerdp3";
@@ -186,20 +189,28 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 xfreerdpPath = "/app/bin/xfreerdp";
             }
+            
+            
             else
             {
-                xfreerdpPath = "xfreerdp";
+                // Rider / local machine fallback
+                startInfo.FileName = "flatpak";
+                startInfo.ArgumentList.Add("run");
+                startInfo.ArgumentList.Add("--command=xfreerdp");
+                startInfo.ArgumentList.Add("com.freerdp.FreeRDP");
+            }
+
+
+            if (!string.IsNullOrEmpty(xfreerdpPath))
+            {
+                startInfo.FileName = xfreerdpPath;
             }
             
-
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = xfreerdpPath,
-                UseShellExecute = false,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardInput = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
+            
 
             foreach (var arg in args)
             {
