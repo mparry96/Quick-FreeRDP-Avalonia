@@ -309,6 +309,7 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 rdpItem.IpAddress = NewRdpItem.IpAddress;
                 rdpItem.UserName = NewRdpItem.UserName;
+                rdpItem.Domain = NewRdpItem.Domain;
                 rdpItem.ResolutionWidth = NewRdpItem.ResolutionWidth;
                 rdpItem.ResolutionHeight = NewRdpItem.ResolutionHeight;
                 rdpItem.FloatBarBool = NewRdpItem.FloatBarBool;
