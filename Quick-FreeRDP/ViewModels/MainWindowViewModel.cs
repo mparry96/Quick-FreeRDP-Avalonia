@@ -289,6 +289,18 @@ public partial class MainWindowViewModel : ViewModelBase
             SelectedRdpItem = RdpItems[0];
         }
     }
+    
+    [RelayCommand]
+    public void ConfigFolder()
+    {
+        var configLocationFolder = ConfigManager.GetConfigFolder();
+        
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = configLocationFolder,
+            UseShellExecute = true
+        });
+    }
 
     [RelayCommand]
     public async Task SaveDetails()

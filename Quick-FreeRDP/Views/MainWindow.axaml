@@ -18,6 +18,7 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel />
     </Design.DataContext>
+    
 
 
     <Grid Margin="20,20,20,20" ColumnDefinitions="*">
@@ -44,19 +45,28 @@
                      PlaceholderText="Enter password">
 
             </TextBox>
+            
+            <Grid Grid.Row="2" Grid.Column="0" ColumnSpan="2" ColumnDefinitions="*,*,*" ColumnSpacing="20">
+                
+                <Button Grid.Column="0"  
+                        FontWeight="Bold"
+                        Content="Config Folder"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Command="{Binding ConfigFolder}">
+                   
+                </Button>
 
-            <Button Grid.Column="0" Grid.Row="2"
-                    Background="Red"
-                    FontWeight="Bold"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Center"
-                    IsEnabled="{Binding DeleteAndLaunchEnabled}"
-                    Command="{Binding Delete}">
+                <Button Grid.Column="1" 
+                        FontWeight="Bold"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        IsEnabled="{Binding DeleteAndLaunchEnabled}"
+                        Command="{Binding Delete}">
                 Delete Entry
             </Button>
 
-            <Button Grid.Column="1" Grid.Row="2"
-                    Background="ForestGreen"
+            <Button Grid.Column="2" 
                     FontWeight="Bold"
                     HorizontalContentAlignment="Center"
                     HorizontalAlignment="Stretch"
@@ -65,6 +75,7 @@
                 Launch
             </Button>
             
+            </Grid>
             <Expander Grid.Column="0" Grid.Row="3" Header="Log" Margin="0,10,0,0"
                       VerticalAlignment="Stretch"
                       HorizontalAlignment="Stretch"

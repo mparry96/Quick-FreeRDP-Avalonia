@@ -9,7 +9,7 @@ using System.Text.Json;
 
 public class ConfigManager
 {
-    private static string GetConfigFilePath()
+    public static string GetConfigFolder()
     {
         // Get the home directory
         string homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -18,13 +18,19 @@ public class ConfigManager
         string configDirectory = Path.Combine(homeDirectory, "Quick-FreeRDP");
         
         LoggingWithSerilog.Logger($"configDirectory: {configDirectory}");
-  
-
+        
         // Ensure the directory exists
         if (!Directory.Exists(configDirectory))
         {
             Directory.CreateDirectory(configDirectory);
         }
+
+        return configDirectory;
+    }
+    
+    private static string GetConfigFilePath()
+    {
+        string configDirectory = GetConfigFolder();
 
         // Define the config file path
         return Path.Combine(configDirectory, "config.json");
