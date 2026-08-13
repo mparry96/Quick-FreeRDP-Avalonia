@@ -152,11 +152,11 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             var args = new List<string>
             {
-                $"/v:{SelectedRdpItem.IpAddress}",
-                $"/size:{SelectedRdpItem.ResolutionWidth}x{SelectedRdpItem.ResolutionHeight}"
+                $"/v:{NewRdpItem.IpAddress}",
+                $"/size:{NewRdpItem.ResolutionWidth}x{NewRdpItem.ResolutionHeight}"
             };
             
-            var parts = SelectedRdpItem.UserName.Split('\\');
+            var parts = NewRdpItem.UserName.Split('\\');
 
             if (parts.Length == 3)
             {
@@ -165,17 +165,18 @@ public partial class MainWindowViewModel : ViewModelBase
             }
             else
             {
-                args.Add($"/u:{SelectedRdpItem.UserName}");
+                args.Add($"/d:"); // stdin seems to need an empty domain even when a domain is not used
+                args.Add($"/u:{NewRdpItem.UserName}");
             }
             
             args.Add("/cert:ignore");
             args.Add("/from-stdin");
             
 
-            if (SelectedRdpItem.FullScreenBool)
+            if (NewRdpItem.FullScreenBool)
                 args.Add("/f");
 
-            if (SelectedRdpItem.FloatBarBool)
+            if (NewRdpItem.FloatBarBool)
                 args.Add("/floatbar:show:always");
 
             string xfreerdpPath = string.Empty;
