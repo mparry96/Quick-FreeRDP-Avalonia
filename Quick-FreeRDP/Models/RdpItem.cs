@@ -19,6 +19,8 @@ public partial class RdpItem : ObservableObject
     
     public string UserName { get; set; }  = string.Empty;
     
+    public string Domain { get; set; }  = string.Empty;
+    
     public int ResolutionHeight { get; set; }
 
     public int ResolutionWidth { get; set; }

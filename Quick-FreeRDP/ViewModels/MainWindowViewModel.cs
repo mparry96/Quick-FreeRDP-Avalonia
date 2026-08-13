@@ -65,6 +65,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 Name = string.Empty,
                 IpAddress = string.Empty,
                 UserName = string.Empty,
+                Domain = string.Empty,
                 FloatBarBool = true,
                 FullScreenBool = false,
             };
@@ -76,6 +77,7 @@ public partial class MainWindowViewModel : ViewModelBase
             Name = value.Name,
             IpAddress = value.IpAddress,
             UserName = value.UserName,
+            Domain = value.Domain,
             ResolutionHeight = value.ResolutionHeight,
             ResolutionWidth = value.ResolutionWidth,
             FloatBarBool = value.FloatBarBool,
@@ -155,19 +157,9 @@ public partial class MainWindowViewModel : ViewModelBase
                 $"/v:{NewRdpItem.IpAddress}",
                 $"/size:{NewRdpItem.ResolutionWidth}x{NewRdpItem.ResolutionHeight}"
             };
-            
-            var parts = NewRdpItem.UserName.Split('\\');
 
-            if (parts.Length == 3)
-            {
-                args.Add($"/d:{parts[0]}");
-                args.Add($"/u:{parts[2]}");
-            }
-            else
-            {
-                args.Add($"/d:"); // stdin seems to need an empty domain even when a domain is not used
-                args.Add($"/u:{NewRdpItem.UserName}");
-            }
+            args.Add($"/u:{NewRdpItem.UserName}");
+            args.Add($"/d:{NewRdpItem.Domain}"); // stdin expects an empty domain to be provided, even when a domain is not used
             
             args.Add("/cert:ignore");
             args.Add("/from-stdin");

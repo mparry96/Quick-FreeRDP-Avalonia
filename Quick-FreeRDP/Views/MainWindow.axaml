@@ -115,32 +115,39 @@
                         </TextBlock>
                         <TextBox Grid.Row="1" Grid.Column="1"
                                  Text="{Binding NewRdpItem.UserName}" />
-
-                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">IP Address</TextBlock>
+                        
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                   VerticalAlignment="Center">
+                            Domain
+                            </TextBlock>
                         <TextBox Grid.Row="2" Grid.Column="1"
+                                 Text="{Binding NewRdpItem.Domain}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">IP Address</TextBlock>
+                        <TextBox Grid.Row="3" Grid.Column="1"
                                  Text="{Binding NewRdpItem.IpAddress}" />
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Resolution</TextBlock>
-                        <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,*"
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Resolution</TextBlock>
+                        <Grid Grid.Row="4" Grid.Column="1" ColumnDefinitions="*,*"
                               ColumnSpacing="20"
                               HorizontalAlignment="Stretch">
                             <TextBox Grid.Column="0" Text="{Binding NewRdpItem.ResolutionWidth}" />
                             <TextBox Grid.Column="1" Text="{Binding NewRdpItem.ResolutionHeight}" />
                         </Grid>
 
-                        <TextBlock Grid.Row="4"
+                        <TextBlock Grid.Row="5"
                                    Grid.Column="0"
                                    VerticalAlignment="Center">
                             Full Screen
                         </TextBlock>
-                        <CheckBox Grid.Row="4"
+                        <CheckBox Grid.Row="5"
                                   Grid.Column="1"
                                   VerticalAlignment="Top"
                                   IsChecked="{Binding NewRdpItem.FullScreenBool}">
                         </CheckBox>
 
-                        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">Floatbar</TextBlock>
-                        <CheckBox Grid.Row="5" Grid.Column="1"
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center">Floatbar</TextBlock>
+                        <CheckBox Grid.Row="6" Grid.Column="1"
                                   VerticalAlignment="Top"
                                   IsChecked="{Binding NewRdpItem.FloatBarBool}">
                         </CheckBox>
