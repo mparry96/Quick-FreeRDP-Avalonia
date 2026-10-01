@@ -10,6 +10,9 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         
+        if (Design.IsDesignMode)
+            return;
+        
         DataContextChanged += (_, _) =>
         {
             if (DataContext is MainWindowViewModel vm)

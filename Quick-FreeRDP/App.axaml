@@ -15,6 +15,10 @@
         <Style Selector="ScrollBar">
             <Setter Property="AllowAutoHide" Value="False" />
         </Style>
+        
+        <Style Selector="TextBox.NoFocus">
+            <Setter Property="FocusAdorner" Value="{x:Null}" />
+        </Style>
     </Application.Styles>
 
 </Application>
