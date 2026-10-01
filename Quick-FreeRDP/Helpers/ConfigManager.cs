@@ -19,6 +19,13 @@ public class ConfigManager
         
         LoggingWithSerilog.Logger($"configDirectory: {configDirectory}");
         
+        // Populate some dummy logs for quickly testing the log window size
+        // for(int i = 0; i < 10 ; i++)
+        // {
+        //     LoggingWithSerilog.Logger($"Example line, example line , does whatever an example line does, can he swing, from a ledge , no he can't , he pig boi");
+        // }
+        
+        
         // Ensure the directory exists
         if (!Directory.Exists(configDirectory))
         {

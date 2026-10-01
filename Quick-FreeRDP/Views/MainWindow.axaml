@@ -82,15 +82,16 @@
                       IsExpanded="False" 
                       Grid.ColumnSpan="2">
                 <ScrollViewer VerticalScrollBarVisibility="Visible"
+                              HorizontalScrollBarVisibility="Visible"
                               x:Name="ConsoleScrollViewer"
                               Height="160"
                               Background="Transparent"
-                              
-                              HorizontalScrollBarVisibility="Disabled">
+                             >
+
                     <TextBlock x:Name="ConsoleOutput"
-                               Margin="0,0,30,0"
+                               Margin="0,0,40,30"
                                FontSize="12"
-                               TextWrapping="Wrap"
+                               TextWrapping="NoWrap"
                                Text="{Binding WindowConsoleLog}">
                     </TextBlock>
                 </ScrollViewer>
