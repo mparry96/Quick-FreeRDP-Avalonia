@@ -21,10 +21,12 @@ public partial class RdpItem : ObservableObject
     
     public string Domain { get; set; }  = string.Empty;
     
-    public int ResolutionHeight { get; set; }
+    [ObservableProperty]
+    public partial int ResolutionHeight { get; set; }
 
-    public int ResolutionWidth { get; set; }
-
+    [ObservableProperty]
+    public partial int ResolutionWidth { get; set; }
+    
     public bool FullScreenBool { get; set; }
     
     public bool FloatBarBool { get; set; }

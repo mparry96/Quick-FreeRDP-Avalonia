@@ -32,8 +32,29 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private string resolutionY = string.Empty;
 
     [ObservableProperty] private ObservableCollection<string> resolutionsListboxItems = [];
+    
+    [ObservableProperty] private string? selectedComboboxResolution = null;
 
-    [ObservableProperty] private bool presetResolutionsEnabled = true;
+    [ObservableProperty] private bool presetResolutionsEnabled = false; // only show temporarily when toggle button is used
+    
+    partial void OnSelectedComboboxResolutionChanged(string? value)
+    {
+            PresetResolutionsEnabled = false;
+
+            if (value == null || !value.Contains("x")) return;
+
+            var x = Convert.ToInt32(value.Split("x")[0]);
+            var y =  Convert.ToInt32(value.Split("x")[1]);
+            NewRdpItem.ResolutionWidth = x;
+            NewRdpItem.ResolutionHeight = y;
+            
+            // fix for ComboBox immediately reapplying the selected value
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                SelectedComboboxResolution = string.Empty;
+            });
+        
+    }
 
     partial void OnNewRdpItemChanged(RdpItem value)
     {
@@ -160,12 +181,16 @@ public partial class MainWindowViewModel : ViewModelBase
 
         try
         {
+    
+    
+            
             var args = new List<string>
             {
-                $"/v:{NewRdpItem.IpAddress}",
-                $"/size:{NewRdpItem.ResolutionWidth}x{NewRdpItem.ResolutionHeight}"
+                $"/v:{NewRdpItem.IpAddress}"
             };
 
+            args.Add($"/size:{NewRdpItem.ResolutionWidth}x{NewRdpItem.ResolutionHeight}");
+            
             args.Add($"/u:{NewRdpItem.UserName}");
             args.Add($"/d:{NewRdpItem.Domain}"); // stdin expects an empty domain to be provided, even when a domain is not used
 

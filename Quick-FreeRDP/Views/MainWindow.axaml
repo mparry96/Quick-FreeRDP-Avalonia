@@ -165,17 +165,22 @@
 
                                         <ComboBox Grid.Column="0" HorizontalAlignment="Stretch"
                                                   Grid.ColumnSpan="2"
+                                                  SelectedItem="{Binding SelectedComboboxResolution}"
                                                   IsVisible="{Binding PresetResolutionsEnabled}"
                                                   ItemsSource="{Binding ResolutionsListboxItems}">
                                             
                                         </ComboBox>
                                         
-                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                            <Label VerticalAlignment="Center" FontSize="12">Presets</Label>
-                                            <CheckBox Grid.Column="2" 
-                                                      Margin="5,0,0,0"
+                                        <ToggleButton Grid.Column="2"
+                                                      Content="Presets"
                                                       IsChecked="{Binding PresetResolutionsEnabled}" />
-                                        </StackPanel>
+                                        
+                                        <!-- <StackPanel Grid.Column="2" Orientation="Horizontal"> -->
+                                        <!--     <Label VerticalAlignment="Center" FontSize="12">Presets</Label> -->
+                                        <!--     <CheckBox Grid.Column="2"  -->
+                                        <!--               Margin="5,0,0,0" -->
+                                        <!--               IsChecked="{Binding PresetResolutionsEnabled}" /> -->
+                                        <!-- </StackPanel> -->
 
 
                                     </Grid>
