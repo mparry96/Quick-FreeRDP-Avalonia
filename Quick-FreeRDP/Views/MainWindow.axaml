@@ -79,18 +79,21 @@
             <TabControl Grid.Row="3"
                         Grid.Column="0"
                         Grid.ColumnSpan="2"
+                        SelectedIndex="0"
                         Margin="0,10,0,0">
 
 
                 <!-- RDP Details Tab -->
                 <TabItem Header="RDP Details">
-                    <Grid RowDefinitions="*" 
-                          Margin="0,6,0,0"
-                          Background="#2B2B2B">
-                        <Border
-                            BorderThickness="2"
-                            CornerRadius="3"
-                            BorderBrush="White">
+
+                    <Border
+                        Background="#2B2B2B"
+                        BorderThickness="2"
+                        CornerRadius="3"
+                        BorderBrush="White">
+
+                        <Grid RowDefinitions="*"
+                              Margin="20,20,30,0">
 
 
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -99,8 +102,7 @@
                                 <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*"
                                       ColumnDefinitions="Auto,*"
                                       ColumnSpacing="26"
-                                      RowSpacing="14"
-                                      Margin="10,20,30,0">
+                                      RowSpacing="14">
 
                                     <TextBlock Grid.Row="0"
                                                Grid.Column="0"
@@ -150,14 +152,32 @@
 
                                     <Grid Grid.Row="4"
                                           Grid.Column="1"
-                                          ColumnDefinitions="*,*"
+                                          ColumnDefinitions="*,*,Auto"
                                           ColumnSpacing="20">
 
                                         <TextBox Grid.Column="0"
+                                                 IsVisible="{Binding !PresetResolutionsEnabled}"
                                                  Text="{Binding NewRdpItem.ResolutionWidth}" />
 
                                         <TextBox Grid.Column="1"
+                                                 IsVisible="{Binding !PresetResolutionsEnabled}"
                                                  Text="{Binding NewRdpItem.ResolutionHeight}" />
+
+                                        <ComboBox Grid.Column="0" HorizontalAlignment="Stretch"
+                                                  Grid.ColumnSpan="2"
+                                                  IsVisible="{Binding PresetResolutionsEnabled}"
+                                                  ItemsSource="{Binding ResolutionsListboxItems}">
+                                            
+                                        </ComboBox>
+                                        
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                            <Label VerticalAlignment="Center" FontSize="12">Presets</Label>
+                                            <CheckBox Grid.Column="2" 
+                                                      Margin="5,0,0,0"
+                                                      IsChecked="{Binding PresetResolutionsEnabled}" />
+                                        </StackPanel>
+
+
                                     </Grid>
 
                                     <TextBlock Grid.Row="5"
@@ -196,16 +216,75 @@
                                 </Grid>
 
                             </ScrollViewer>
-                        </Border>
-                    </Grid>
+
+                        </Grid>
+                    </Border>
                 </TabItem>
 
                 <!-- Global Settings Tab -->
                 <TabItem Header="Global Settings">
-                    <Grid Margin="10">
-                        <!-- Put global settings controls here -->
-                        <TextBlock Text="Global settings go here" />
-                    </Grid>
+
+
+                    <Border
+                        BorderThickness="2"
+                        CornerRadius="3"
+                        Background="#2B2B2B"
+                        BorderBrush="White">
+
+                        <Grid Margin="20,20,30,10"
+
+                              RowSpacing="10"
+                              ColumnDefinitions="Auto,*"
+                              ColumnSpacing="20"
+                              RowDefinitions="Auto,Auto,Auto,200,Auto">
+
+                            <Label Grid.Row="0" VerticalAlignment="Center">
+                                Add Resolution
+                            </Label>
+                            <Grid ColumnDefinitions="*,Auto,*,Auto"
+                                  Grid.Row="0"
+                                  Grid.Column="1">
+
+                                <TextBox Grid.Column="0" Text="{Binding ResolutionX}">
+
+                                </TextBox>
+
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                           Margin="20,0,20,0">
+                                    X
+                                </TextBlock>
+
+                                <TextBox Grid.Column="2" Text="{Binding ResolutionY}">
+
+                                </TextBox>
+
+                                <Button Grid.Column="3" Margin="20,0,0,0"
+                                        Command="{Binding AddResolution}">
+                                    Add
+                                </Button>
+
+
+                            </Grid>
+
+
+                            <Label Grid.Row="2"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="2">
+                                Resolutions Presets
+                            </Label>
+                            <ListBox Grid.Row="3"
+                                     BorderBrush="White"
+                                     BorderThickness="1"
+                                     CornerRadius="2"
+                                     Grid.Column="0"
+                                     Grid.ColumnSpan="2"
+                                     Background="{DynamicResource TextControlBackground}"
+                                     HorizontalAlignment="Stretch"
+                                     ItemsSource="{Binding ResolutionsListboxItems}"
+                                     x:Name="ResolutionsListbox" />
+                        </Grid>
+                    </Border>
+
                 </TabItem>
 
 

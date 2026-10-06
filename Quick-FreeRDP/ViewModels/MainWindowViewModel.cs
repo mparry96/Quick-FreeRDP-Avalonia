@@ -27,6 +27,14 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty] private string windowConsoleLog = "Ready";
 
+    [ObservableProperty] private string resolutionX = string.Empty;
+
+    [ObservableProperty] private string resolutionY = string.Empty;
+
+    [ObservableProperty] private ObservableCollection<string> resolutionsListboxItems = [];
+
+    [ObservableProperty] private bool presetResolutionsEnabled = true;
+
     partial void OnNewRdpItemChanged(RdpItem value)
     {
         //  if (value == null) return;
@@ -160,10 +168,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
             args.Add($"/u:{NewRdpItem.UserName}");
             args.Add($"/d:{NewRdpItem.Domain}"); // stdin expects an empty domain to be provided, even when a domain is not used
-            
+
             args.Add("/cert:ignore");
             args.Add("/from-stdin");
-            
+
 
             if (NewRdpItem.FullScreenBool)
                 args.Add("/f");
@@ -182,8 +190,8 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 xfreerdpPath = "/app/bin/xfreerdp";
             }
-            
-            
+
+
             else
             {
                 // Rider / local machine fallback
@@ -198,21 +206,21 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 startInfo.FileName = xfreerdpPath;
             }
-            
+
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardInput = true;
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
-            
+
 
             foreach (var arg in args)
             {
                 startInfo.ArgumentList.Add(arg);
             }
-            
+
             LoggingWithSerilog.Logger(
-                    $"{xfreerdpPath} {string.Join(" ", startInfo.ArgumentList)}");
-            
+                $"{xfreerdpPath} {string.Join(" ", startInfo.ArgumentList)}");
+
             var process = new Process
             {
                 StartInfo = startInfo,
@@ -266,6 +274,20 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    public void AddResolution()
+    {
+        if (string.IsNullOrEmpty(ResolutionX) || string.IsNullOrEmpty(ResolutionY))
+            return;
+
+
+        if (int.TryParse(ResolutionX, out int number) && number > 0
+                                                      && int.TryParse(ResolutionY, out int number2) && number2 > 0)
+        {
+            ResolutionsListboxItems.Add($"{number}x{number2}");
+        }
+    }
+
+    [RelayCommand]
     public void Delete()
     {
         int removeIndex = 0;
@@ -289,12 +311,12 @@ public partial class MainWindowViewModel : ViewModelBase
             SelectedRdpItem = RdpItems[0];
         }
     }
-    
+
     [RelayCommand]
     public void ConfigFolder()
     {
         var configLocationFolder = ConfigManager.GetConfigFolder();
-        
+
         Process.Start(new ProcessStartInfo
         {
             FileName = configLocationFolder,

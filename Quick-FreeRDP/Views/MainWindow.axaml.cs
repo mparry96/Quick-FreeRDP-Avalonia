@@ -1,3 +1,4 @@
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using Quick_FreeRDP.ViewModels;
@@ -26,5 +27,6 @@ public partial class MainWindow : Window
                 };
             }
         };
+        
     }
 }
