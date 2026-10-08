@@ -185,9 +185,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
         try
         {
-    
-    
-            
             var args = new List<string>
             {
                 $"/v:{NewRdpItem.IpAddress}"
@@ -210,7 +207,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             string xfreerdpPath = string.Empty;
 
-            // This is the freerdp version that is built manually from the .tar.bz2 source, and included in my flatpak via the com.mparry96.QuickRDP.json
+            // These are BOTH for freerdp versions built manually from the .tar.bz2 source, and included in my flatpak via the com.mparry96.QuickRDP.json
             if (File.Exists("/app/bin/xfreerdp3"))
             {
                 xfreerdpPath = "/app/bin/xfreerdp3";
@@ -219,7 +216,6 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 xfreerdpPath = "/app/bin/xfreerdp";
             }
-
 
             else
             {
