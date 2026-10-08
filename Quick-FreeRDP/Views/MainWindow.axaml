@@ -278,6 +278,8 @@
                                 Resolutions Presets
                             </Label>
                             <ListBox Grid.Row="3"
+                                     KeyUp="ResolutionsListbox_OnKeyUp"
+                                     DoubleTapped="ResolutionsListbox_OnDoubleTapped"
                                      BorderBrush="White"
                                      BorderThickness="1"
                                      CornerRadius="2"

@@ -146,9 +146,13 @@ public partial class MainWindowViewModel : ViewModelBase
         NewRdpItem = new RdpItem();
 
         RdpItems = [];
-
-        RdpItems = ConfigManager.LoadConfig();
-
+        
+        var configFromJson = ConfigManager.LoadConfig();
+        
+        
+        RdpItems = configFromJson.RdpItems;
+        ResolutionsListboxItems = configFromJson.AvailableResolutions;
+        
 
         if (!RdpItems.Any())
         {
@@ -309,6 +313,16 @@ public partial class MainWindowViewModel : ViewModelBase
                                                       && int.TryParse(ResolutionY, out int number2) && number2 > 0)
         {
             ResolutionsListboxItems.Add($"{number}x{number2}");
+            
+            // Sort by resolution width first, then height as 2nd priority
+            var sorted = ResolutionsListboxItems
+                .Distinct()
+                .OrderBy(x => int.Parse(x.Split('x')[0]))   // width
+                .ThenBy(x => int.Parse(x.Split('x')[1]));   // height
+
+            ResolutionsListboxItems = new ObservableCollection<string>(sorted);
+            
+            ConfigManager.SaveConfig(RdpItems, ResolutionsListboxItems);
         }
     }
 
@@ -327,7 +341,7 @@ public partial class MainWindowViewModel : ViewModelBase
         if (removeIndex > 0)
         {
             RdpItems.RemoveAt(removeIndex);
-            ConfigManager.SaveConfig(RdpItems);
+            ConfigManager.SaveConfig(RdpItems, ResolutionsListboxItems);
         }
 
         if (RdpItems.Any())
@@ -404,7 +418,7 @@ public partial class MainWindowViewModel : ViewModelBase
         SelectedRdpItem = switchToThisOne;
 
 
-        ConfigManager.SaveConfig(RdpItems);
+        ConfigManager.SaveConfig(RdpItems , ResolutionsListboxItems);
 
         await msg.ShowAsync();
     }
