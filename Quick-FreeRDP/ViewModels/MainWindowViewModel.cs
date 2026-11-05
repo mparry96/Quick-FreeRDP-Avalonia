@@ -171,7 +171,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async Task Launch()
+    private async Task Launch()
     {
         if (string.IsNullOrEmpty(RdpPassword))
         {
@@ -299,7 +299,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void AddResolution()
+    private void AddResolution()
     {
         if (string.IsNullOrEmpty(ResolutionX) || string.IsNullOrEmpty(ResolutionY))
             return;
@@ -323,7 +323,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void Delete()
+    private void Delete()
     {
         int removeIndex = 0;
         foreach (var rdpItem in RdpItems)
@@ -348,7 +348,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void ConfigFolder()
+    private void ConfigFolder()
     {
         var configLocationFolder = ConfigManager.GetConfigFolder();
 
@@ -360,7 +360,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async Task SaveDetails()
+    private async Task SaveDetails()
     {
         MessageBox msg = new MessageBox();
         bool updated = false;
