@@ -37,6 +37,21 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty] private bool presetResolutionsEnabled = false; // only show temporarily when toggle button is used
     
+    public List<int> DesktopScaleListboxItems { get; } =
+    [
+        100,
+        125,
+        150,
+        175,
+        200,
+        225,
+        250,
+        300
+    ];
+
+    [ObservableProperty]
+    private int selectedComboboxDesktopScale = 100;
+    
     partial void OnSelectedComboboxResolutionChanged(string? value)
     {
             PresetResolutionsEnabled = false;
@@ -191,6 +206,8 @@ public partial class MainWindowViewModel : ViewModelBase
             };
 
             args.Add($"/size:{NewRdpItem.ResolutionWidth}x{NewRdpItem.ResolutionHeight}");
+            
+            args.Add($"/scale-desktop:{SelectedComboboxDesktopScale} /scale-device:100");
             
             args.Add($"/u:{NewRdpItem.UserName}");
             args.Add($"/d:{NewRdpItem.Domain}"); // stdin expects an empty domain to be provided, even when a domain is not used

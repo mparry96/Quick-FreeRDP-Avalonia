@@ -168,13 +168,13 @@
                                                   SelectedItem="{Binding SelectedComboboxResolution}"
                                                   IsVisible="{Binding PresetResolutionsEnabled}"
                                                   ItemsSource="{Binding ResolutionsListboxItems}">
-                                            
+
                                         </ComboBox>
-                                        
+
                                         <ToggleButton Grid.Column="2"
                                                       Content="Presets"
                                                       IsChecked="{Binding PresetResolutionsEnabled}" />
-                                        
+
                                         <!-- <StackPanel Grid.Column="2" Orientation="Horizontal"> -->
                                         <!--     <Label VerticalAlignment="Center" FontSize="12">Presets</Label> -->
                                         <!--     <CheckBox Grid.Column="2"  -->
@@ -185,28 +185,42 @@
 
                                     </Grid>
 
+                                    <!--Scale-->
                                     <TextBlock Grid.Row="5"
+                                               Grid.Column="0"
+                                               VerticalAlignment="Center">
+                                        Scale
+                                    </TextBlock>
+
+                                    <ComboBox Grid.Row="5"
+                                              Grid.Column="1"
+                                              SelectedItem="{Binding SelectedComboboxDesktopScale}"
+                                              ItemsSource="{Binding DesktopScaleListboxItems}" />
+
+                                    <!--End Scale-->
+
+                                    <TextBlock Grid.Row="6"
                                                Grid.Column="0"
                                                VerticalAlignment="Center">
                                         Full Screen
                                     </TextBlock>
 
-                                    <CheckBox Grid.Row="5"
+                                    <CheckBox Grid.Row="6"
                                               Grid.Column="1"
                                               IsChecked="{Binding NewRdpItem.FullScreenBool}" />
 
-                                    <TextBlock Grid.Row="6"
+                                    <TextBlock Grid.Row="7"
                                                Grid.Column="0"
                                                VerticalAlignment="Center">
                                         Floatbar
                                     </TextBlock>
 
-                                    <CheckBox Grid.Row="6"
+                                    <CheckBox Grid.Row="7"
                                               Grid.Column="1"
                                               IsChecked="{Binding NewRdpItem.FloatBarBool}" />
 
                                     <Button Grid.Column="0"
-                                            Grid.Row="7"
+                                            Grid.Row="8"
                                             Grid.ColumnSpan="2"
                                             HorizontalAlignment="Right"
                                             Padding="50,5"
