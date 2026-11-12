@@ -189,12 +189,13 @@
                                     <TextBlock Grid.Row="5"
                                                Grid.Column="0"
                                                VerticalAlignment="Center">
-                                        Scale
+                                        Desktop Scale
                                     </TextBlock>
 
                                     <ComboBox Grid.Row="5"
                                               Grid.Column="1"
-                                              SelectedItem="{Binding SelectedComboboxDesktopScale}"
+                                              MinWidth="70"
+                                              SelectedItem="{Binding NewRdpItem.DesktopScale}"
                                               ItemsSource="{Binding DesktopScaleListboxItems}" />
 
                                     <!--End Scale-->

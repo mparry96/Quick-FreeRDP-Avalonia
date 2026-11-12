@@ -26,6 +26,8 @@ public partial class RdpItem : ObservableObject
 
     [ObservableProperty]
     public partial int ResolutionWidth { get; set; }
+
+    [ObservableProperty] public partial int DesktopScale { get; set; } = 100; // Default to 100% desktop scale
     
     public bool FullScreenBool { get; set; }
     

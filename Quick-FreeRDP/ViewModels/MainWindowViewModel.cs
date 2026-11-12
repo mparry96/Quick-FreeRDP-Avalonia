@@ -48,9 +48,6 @@ public partial class MainWindowViewModel : ViewModelBase
         250,
         300
     ];
-
-    [ObservableProperty]
-    private int selectedComboboxDesktopScale = 100;
     
     partial void OnSelectedComboboxResolutionChanged(string? value)
     {
@@ -124,6 +121,7 @@ public partial class MainWindowViewModel : ViewModelBase
             Domain = value.Domain,
             ResolutionHeight = value.ResolutionHeight,
             ResolutionWidth = value.ResolutionWidth,
+            DesktopScale = value.DesktopScale,
             FloatBarBool = value.FloatBarBool,
             FullScreenBool = value.FullScreenBool,
         };
@@ -207,7 +205,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             args.Add($"/size:{NewRdpItem.ResolutionWidth}x{NewRdpItem.ResolutionHeight}");
             
-            args.Add($"/scale-desktop:{SelectedComboboxDesktopScale} /scale-device:100");
+            args.Add($"/scale-desktop:{NewRdpItem.DesktopScale} /scale-device:100");
             
             args.Add($"/u:{NewRdpItem.UserName}");
             args.Add($"/d:{NewRdpItem.Domain}"); // stdin expects an empty domain to be provided, even when a domain is not used
@@ -398,6 +396,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 rdpItem.Domain = NewRdpItem.Domain;
                 rdpItem.ResolutionWidth = NewRdpItem.ResolutionWidth;
                 rdpItem.ResolutionHeight = NewRdpItem.ResolutionHeight;
+                rdpItem.DesktopScale = NewRdpItem.DesktopScale;
                 rdpItem.FloatBarBool = NewRdpItem.FloatBarBool;
                 rdpItem.FullScreenBool = NewRdpItem.FullScreenBool;
 
