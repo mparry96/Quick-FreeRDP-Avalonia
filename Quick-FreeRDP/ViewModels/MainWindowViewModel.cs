@@ -205,7 +205,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
             args.Add($"/size:{NewRdpItem.ResolutionWidth}x{NewRdpItem.ResolutionHeight}");
             
-            args.Add($"/scale-desktop:{NewRdpItem.DesktopScale} /scale-device:100");
+            args.Add($"/scale-desktop:{NewRdpItem.DesktopScale}");
+            args.Add("/scale-device:100");
             
             args.Add($"/u:{NewRdpItem.UserName}");
             args.Add($"/d:{NewRdpItem.Domain}"); // stdin expects an empty domain to be provided, even when a domain is not used
@@ -237,8 +238,10 @@ public partial class MainWindowViewModel : ViewModelBase
                 // Rider / local machine fallback
                 startInfo.FileName = "flatpak";
                 startInfo.ArgumentList.Add("run");
-                startInfo.ArgumentList.Add("--command=xfreerdp");
+                startInfo.ArgumentList.Add("--command=sdl-freerdp");
                 startInfo.ArgumentList.Add("com.freerdp.FreeRDP");
+
+                startInfo.Environment["SDL_VIDEODRIVER"] = "wayland";
             }
 
 
