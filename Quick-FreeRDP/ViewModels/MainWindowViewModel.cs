@@ -202,8 +202,11 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 $"/v:{NewRdpItem.IpAddress}"
             };
-
-            args.Add($"/size:{NewRdpItem.ResolutionWidth}x{NewRdpItem.ResolutionHeight}");
+            
+            if (!NewRdpItem.FullScreenBool)
+            {
+                args.Add($"/size:{NewRdpItem.ResolutionWidth}x{NewRdpItem.ResolutionHeight}");
+            }
             
             args.Add($"/scale-desktop:{NewRdpItem.DesktopScale}");
             args.Add("/scale-device:100");
@@ -238,10 +241,8 @@ public partial class MainWindowViewModel : ViewModelBase
                 // Rider / local machine fallback
                 startInfo.FileName = "flatpak";
                 startInfo.ArgumentList.Add("run");
-                startInfo.ArgumentList.Add("--command=sdl-freerdp");
+                startInfo.ArgumentList.Add("--command=xfreerdp");
                 startInfo.ArgumentList.Add("com.freerdp.FreeRDP");
-
-                startInfo.Environment["SDL_VIDEODRIVER"] = "wayland";
             }
 
 
